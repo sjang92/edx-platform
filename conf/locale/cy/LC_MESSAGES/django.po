@@ -40,7 +40,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: edx-platform\n"
 "Report-Msgid-Bugs-To: openedx-translation@googlegroups.com\n"
-"POT-Creation-Date: 2014-06-19 00:16-0400\n"
+"POT-Creation-Date: 2014-06-23 08:52-0400\n"
 "PO-Revision-Date: 2014-02-06 03:04+0000\n"
 "Last-Translator: Ned Batchelder <ned@edx.org>\n"
 "Language-Team: Welsh (http://www.transifex.com/projects/p/edx-platform/language/cy/)\n"
@@ -2086,9 +2086,9 @@ msgstr ""
 
 #: common/lib/xmodule/xmodule/split_test_module.py
 msgid ""
-"The configuration for how users are grouped for this content experiment. "
-"After you select the group configuration and save the content experiment, "
-"you cannot change this setting."
+"The configuration defines how users are grouped for this content experiment."
+" Caution: Changing the group configuration of a student-visible experiment "
+"will impact the experiment data."
 msgstr ""
 
 #: common/lib/xmodule/xmodule/split_test_module.py
@@ -2100,25 +2100,32 @@ msgid "Which child module students in a particular group_id should see"
 msgstr ""
 
 #: common/lib/xmodule/xmodule/split_test_module.py
-#: lms/templates/split_test_studio_header.html
-msgid "You must select a group configuration for this content experiment."
+msgid "The experiment is not associated with a group configuration."
+msgstr ""
+
+#: common/lib/xmodule/xmodule/split_test_module.py
+msgid "Select a Group Configuration"
 msgstr ""
 
 #: common/lib/xmodule/xmodule/split_test_module.py
 msgid ""
-"This content experiment will not be shown to students because it refers to a"
-" group configuration that has been deleted. You can delete this experiment "
-"or reinstate the group configuration to repair it."
+"The experiment uses a deleted group configuration. Select a valid group "
+"configuration or delete this experiment."
 msgstr ""
 
 #: common/lib/xmodule/xmodule/split_test_module.py
 msgid ""
-"This content experiment is in an invalid state and cannot be repaired. "
-"Please delete and recreate."
+"The experiment does not contain all of the groups in the configuration."
 msgstr ""
 
 #: common/lib/xmodule/xmodule/split_test_module.py
-msgid "This content experiment uses group configuration '{experiment_name}'."
+msgid "Add Missing Groups"
+msgstr ""
+
+#: common/lib/xmodule/xmodule/split_test_module.py
+msgid ""
+"The experiment has an inactive group. Move content into active groups, then "
+"delete the inactive group."
 msgstr ""
 
 #. #-#-#-#-#  django-partial.po (edx-platform)  #-#-#-#-#
@@ -3009,7 +3016,7 @@ msgstr ""
 
 #: lms/djangoapps/dashboard/sysadmin.py lms/djangoapps/dashboard/sysadmin.py
 msgid "email"
-msgstr ""
+msgstr "Ebost"
 
 #: lms/djangoapps/dashboard/sysadmin.py
 msgid "Repair Results"
@@ -3204,7 +3211,7 @@ msgstr ""
 #: lms/templates/dashboard.html
 #: lms/templates/courseware/instructor_dashboard.html
 msgid "Email"
-msgstr ""
+msgstr "Ebost"
 
 #: lms/djangoapps/instructor/views/api.py
 msgid "Language"
@@ -5502,7 +5509,7 @@ msgstr ""
 #: lms/templates/open_ended_problems/open_ended_problems.html
 #: lms/templates/peer_grading/peer_grading.html
 msgid "Instructions"
-msgstr ""
+msgstr "Cyfarwyddiadau"
 
 #: lms/templates/annotatable.html lms/templates/imageannotation.html
 #: lms/templates/textannotation.html lms/templates/videoannotation.html
@@ -5534,7 +5541,7 @@ msgstr ""
 #: lms/templates/static_templates/contact.html
 #: lms/templates/static_templates/contact.html
 msgid "Contact"
-msgstr ""
+msgstr "Cysylltu"
 
 #: lms/templates/contact.html
 msgid "Class Feedback"
@@ -5598,7 +5605,7 @@ msgstr ""
 
 #: lms/templates/course.html
 msgid "New"
-msgstr ""
+msgstr "Newydd"
 
 #: lms/templates/dashboard.html
 msgid "Dashboard"
@@ -5637,7 +5644,7 @@ msgstr ""
 #: lms/templates/dashboard.html lms/templates/dashboard.html
 #: lms/templates/dashboard/_dashboard_info_language.html
 msgid "edit"
-msgstr ""
+msgstr "golygu"
 
 #. Translators: this section lists all the third-party authentication
 #. providers
@@ -5980,7 +5987,7 @@ msgstr ""
 #: lms/templates/register.html lms/templates/signup_modal.html
 #: lms/templates/signup_modal.html
 msgid "E-mail"
-msgstr ""
+msgstr "Ebost"
 
 #: lms/templates/help_modal.html
 msgid "Briefly describe your issue"
@@ -6715,14 +6722,26 @@ msgstr ""
 msgid "Login."
 msgstr ""
 
+#: lms/templates/split_test_author_view.html
+msgid "This content experiment uses group configuration '{experiment_name}'."
+msgstr ""
+
+#: lms/templates/split_test_author_view.html
+msgid "This content experiment has issues that affect content visibility."
+msgstr ""
+
+#: lms/templates/split_test_author_view.html
+msgid "Active Groups"
+msgstr ""
+
+#: lms/templates/split_test_author_view.html
+msgid "Inactive Groups"
+msgstr ""
+
 #. Translators: The 'Group' here refers to the group of users that has been
 #. sorted into group_id
 #: lms/templates/split_test_staff_view.html
 msgid "Group {group_id}"
-msgstr ""
-
-#: lms/templates/split_test_studio_header.html
-msgid "Select a Group Configuration"
 msgstr ""
 
 #: lms/templates/staff_problem_info.html
@@ -12112,7 +12131,7 @@ msgstr ""
 
 #: cms/templates/import.html
 msgid "Success"
-msgstr ""
+msgstr "Llwyddiant"
 
 #: cms/templates/import.html
 msgid "Your imported content has now been integrated into this course"
@@ -12431,7 +12450,7 @@ msgstr ""
 
 #: cms/templates/index.html
 msgid "Need help?"
-msgstr ""
+msgstr "Angen cymorth?"
 
 #: cms/templates/index.html
 msgid ""
@@ -12517,7 +12536,7 @@ msgstr ""
 
 #: cms/templates/manage_users.html
 msgid "Staff"
-msgstr ""
+msgstr "Staff"
 
 #: cms/templates/manage_users.html
 msgid "send an email message to {email}"
@@ -13431,22 +13450,6 @@ msgstr ""
 
 #: cms/templates/widgets/sock.html
 msgid "Have problems, questions, or suggestions about edX Studio?"
-msgstr ""
-
-#: cms/templates/widgets/split-edit.html
-msgid ""
-"This content experiment refers to a group configuration that has been "
-"deleted."
-msgstr ""
-
-#: cms/templates/widgets/split-edit.html
-msgid "This content experiment uses group configuration '{0}'."
-msgstr ""
-
-#: cms/templates/widgets/split-edit.html
-msgid ""
-"After you select the group configuration and save the content experiment, "
-"you cannot change this setting."
 msgstr ""
 
 #: cms/templates/widgets/tabs-aggregator.html

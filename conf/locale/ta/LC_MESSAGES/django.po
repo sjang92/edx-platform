@@ -41,7 +41,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: edx-platform\n"
 "Report-Msgid-Bugs-To: openedx-translation@googlegroups.com\n"
-"POT-Creation-Date: 2014-06-19 00:16-0400\n"
+"POT-Creation-Date: 2014-06-23 08:52-0400\n"
 "PO-Revision-Date: 2014-06-17 11:40+0000\n"
 "Last-Translator: solomonsunder <solomonsunder@gmail.com>\n"
 "Language-Team: Tamil (http://www.transifex.com/projects/p/edx-platform/language/ta/)\n"
@@ -2083,9 +2083,9 @@ msgstr ""
 
 #: common/lib/xmodule/xmodule/split_test_module.py
 msgid ""
-"The configuration for how users are grouped for this content experiment. "
-"After you select the group configuration and save the content experiment, "
-"you cannot change this setting."
+"The configuration defines how users are grouped for this content experiment."
+" Caution: Changing the group configuration of a student-visible experiment "
+"will impact the experiment data."
 msgstr ""
 
 #: common/lib/xmodule/xmodule/split_test_module.py
@@ -2097,25 +2097,32 @@ msgid "Which child module students in a particular group_id should see"
 msgstr ""
 
 #: common/lib/xmodule/xmodule/split_test_module.py
-#: lms/templates/split_test_studio_header.html
-msgid "You must select a group configuration for this content experiment."
+msgid "The experiment is not associated with a group configuration."
+msgstr ""
+
+#: common/lib/xmodule/xmodule/split_test_module.py
+msgid "Select a Group Configuration"
 msgstr ""
 
 #: common/lib/xmodule/xmodule/split_test_module.py
 msgid ""
-"This content experiment will not be shown to students because it refers to a"
-" group configuration that has been deleted. You can delete this experiment "
-"or reinstate the group configuration to repair it."
+"The experiment uses a deleted group configuration. Select a valid group "
+"configuration or delete this experiment."
 msgstr ""
 
 #: common/lib/xmodule/xmodule/split_test_module.py
 msgid ""
-"This content experiment is in an invalid state and cannot be repaired. "
-"Please delete and recreate."
+"The experiment does not contain all of the groups in the configuration."
 msgstr ""
 
 #: common/lib/xmodule/xmodule/split_test_module.py
-msgid "This content experiment uses group configuration '{experiment_name}'."
+msgid "Add Missing Groups"
+msgstr ""
+
+#: common/lib/xmodule/xmodule/split_test_module.py
+msgid ""
+"The experiment has an inactive group. Move content into active groups, then "
+"delete the inactive group."
 msgstr ""
 
 #. #-#-#-#-#  django-partial.po (edx-platform)  #-#-#-#-#
@@ -2170,7 +2177,7 @@ msgstr ""
 #. syllabus of the course.
 #: common/lib/xmodule/xmodule/tabs.py lms/templates/courseware/syllabus.html
 msgid "Syllabus"
-msgstr ""
+msgstr "பாடத்திட்டம்"
 
 #. Translators: 'Instructor' appears on the tab that leads to the instructor
 #. dashboard, which is
@@ -5499,7 +5506,7 @@ msgstr ""
 #: lms/templates/open_ended_problems/open_ended_problems.html
 #: lms/templates/peer_grading/peer_grading.html
 msgid "Instructions"
-msgstr ""
+msgstr "அறிவுறுத்தல்கள்"
 
 #: lms/templates/annotatable.html lms/templates/imageannotation.html
 #: lms/templates/textannotation.html lms/templates/videoannotation.html
@@ -5512,7 +5519,7 @@ msgstr ""
 
 #: lms/templates/annotatable.html
 msgid "Hide Annotations"
-msgstr ""
+msgstr "சிறுகுறிப்புகளை மறை"
 
 #: lms/templates/contact.html lms/templates/static_templates/about.html
 #: lms/templates/static_templates/about.html
@@ -5521,17 +5528,17 @@ msgstr ""
 
 #: lms/templates/contact.html
 msgid "Faq"
-msgstr ""
+msgstr "அடிக்கடி கேட்கப்படும் கேள்விகள்"
 
 #: lms/templates/contact.html lms/templates/footer.html
 msgid "Press"
-msgstr ""
+msgstr "செய்தியாளர்"
 
 #: lms/templates/contact.html lms/templates/footer.html
 #: lms/templates/static_templates/contact.html
 #: lms/templates/static_templates/contact.html
 msgid "Contact"
-msgstr ""
+msgstr "தொடர்பு"
 
 #: lms/templates/contact.html
 msgid "Class Feedback"
@@ -5547,7 +5554,7 @@ msgstr ""
 
 #: lms/templates/contact.html
 msgid "General Inquiries and Feedback"
-msgstr ""
+msgstr "பொதுவான விசாரணைகள் மற்றும் கருத்து"
 
 #: lms/templates/contact.html
 msgid ""
@@ -5560,7 +5567,7 @@ msgstr ""
 
 #: lms/templates/contact.html
 msgid "Technical Inquiries and Feedback"
-msgstr ""
+msgstr "தொழில்நுட்ப விசாரணைகள் மற்றும் கருத்து"
 
 #: lms/templates/contact.html
 msgid ""
@@ -5575,7 +5582,7 @@ msgstr ""
 
 #: lms/templates/contact.html
 msgid "Media"
-msgstr ""
+msgstr "ஊடகங்கள்"
 
 #: lms/templates/contact.html
 msgid ""
@@ -5585,7 +5592,7 @@ msgstr ""
 
 #: lms/templates/contact.html
 msgid "Universities"
-msgstr ""
+msgstr "பல்கலைக்கழகங்கள்"
 
 #: lms/templates/contact.html
 msgid ""
@@ -6712,14 +6719,26 @@ msgstr ""
 msgid "Login."
 msgstr ""
 
+#: lms/templates/split_test_author_view.html
+msgid "This content experiment uses group configuration '{experiment_name}'."
+msgstr ""
+
+#: lms/templates/split_test_author_view.html
+msgid "This content experiment has issues that affect content visibility."
+msgstr ""
+
+#: lms/templates/split_test_author_view.html
+msgid "Active Groups"
+msgstr ""
+
+#: lms/templates/split_test_author_view.html
+msgid "Inactive Groups"
+msgstr ""
+
 #. Translators: The 'Group' here refers to the group of users that has been
 #. sorted into group_id
 #: lms/templates/split_test_staff_view.html
 msgid "Group {group_id}"
-msgstr ""
-
-#: lms/templates/split_test_studio_header.html
-msgid "Select a Group Configuration"
 msgstr ""
 
 #: lms/templates/staff_problem_info.html
@@ -6812,11 +6831,11 @@ msgstr ""
 
 #: lms/templates/staticbook.html
 msgid "Previous page"
-msgstr ""
+msgstr "முந்தைய பக்கம்"
 
 #: lms/templates/staticbook.html
 msgid "Next page"
-msgstr ""
+msgstr "அடுத்த பக்கம்"
 
 #: lms/templates/sysadmin_dashboard.html
 #: lms/templates/sysadmin_dashboard_gitlogs.html
@@ -8390,7 +8409,7 @@ msgstr ""
 #: lms/templates/discussion/mustache/_inline_discussion_cohorted.mustache
 #: wiki/forms.py wiki/forms.py wiki/forms.py
 msgid "Title"
-msgstr ""
+msgstr "தலைப்பு"
 
 #: lms/templates/discussion/_inline_new_post.html
 #: lms/templates/discussion/_new_post.html
@@ -9910,11 +9929,11 @@ msgstr ""
 
 #: lms/templates/registration/activation_complete.html
 msgid "Activation Complete!"
-msgstr ""
+msgstr "செயலாக்கம் நிறைவுற்றது!"
 
 #: lms/templates/registration/activation_complete.html
 msgid "Account already active!"
-msgstr ""
+msgstr "கணக்கு ஏற்கனவே செயலில்!"
 
 #: lms/templates/registration/activation_complete.html
 msgid "You can now {link_start}log in{link_end}."
@@ -9922,7 +9941,7 @@ msgstr ""
 
 #: lms/templates/registration/activation_invalid.html
 msgid "Activation Invalid"
-msgstr ""
+msgstr "செயலாக்கம் செல்லுபடியற்றது"
 
 #: lms/templates/registration/activation_invalid.html
 msgid ""
@@ -13422,22 +13441,6 @@ msgstr ""
 msgid "Have problems, questions, or suggestions about edX Studio?"
 msgstr ""
 
-#: cms/templates/widgets/split-edit.html
-msgid ""
-"This content experiment refers to a group configuration that has been "
-"deleted."
-msgstr ""
-
-#: cms/templates/widgets/split-edit.html
-msgid "This content experiment uses group configuration '{0}'."
-msgstr ""
-
-#: cms/templates/widgets/split-edit.html
-msgid ""
-"After you select the group configuration and save the content experiment, "
-"you cannot change this setting."
-msgstr ""
-
 #: cms/templates/widgets/tabs-aggregator.html
 msgid "name"
 msgstr ""
@@ -13460,11 +13463,11 @@ msgstr ""
 
 # empty
 msgid "This is a key string."
-msgstr ""
+msgstr "இது ஒரு முக்கிய சரம்."
 
 #: wiki/admin.py wiki/models/article.py
 msgid "created"
-msgstr ""
+msgstr "உருவாக்கப்பட்டது"
 
 #: wiki/forms.py
 msgid "Only localhost... muahahaha"
@@ -13476,7 +13479,7 @@ msgstr ""
 
 #: wiki/forms.py
 msgid "Type in some contents"
-msgstr ""
+msgstr "சில உள்ளடக்கங்களை தட்டச்சு செய்க"
 
 #: wiki/forms.py
 msgid ""
@@ -13487,11 +13490,11 @@ msgstr ""
 
 #: wiki/forms.py wiki/forms.py
 msgid "Contents"
-msgstr ""
+msgstr "உள்ளடக்கங்கள்"
 
 #: wiki/forms.py wiki/forms.py
 msgid "Summary"
-msgstr ""
+msgstr "சுருக்கம்"
 
 #: wiki/forms.py
 msgid ""
@@ -13511,7 +13514,7 @@ msgstr ""
 
 #: wiki/forms.py
 msgid "Select an option"
-msgstr ""
+msgstr "ஒரு விருப்பத்தை தேர்ந்தெடுங்கள்"
 
 #: wiki/forms.py
 msgid "Slug"
@@ -13542,11 +13545,11 @@ msgstr ""
 
 #: wiki/forms.py
 msgid "Yes, I am sure"
-msgstr ""
+msgstr "ஆமாம், நான் உறுதியாக இருக்கிறேன்"
 
 #: wiki/forms.py
 msgid "Purge"
-msgstr ""
+msgstr "சுத்தி செய்"
 
 #: wiki/forms.py
 msgid ""
@@ -13574,15 +13577,15 @@ msgstr ""
 
 #: wiki/forms.py
 msgid "Permissions"
-msgstr ""
+msgstr "அனுமதிகள்"
 
 #: wiki/forms.py
 msgid "Owner"
-msgstr ""
+msgstr "உரிமையாளர்"
 
 #: wiki/forms.py
 msgid "Enter the username of the owner."
-msgstr ""
+msgstr "உரிமையாளர் பெயர் சேர்க்கவும்."
 
 #: wiki/forms.py
 msgid "(none)"

@@ -26,7 +26,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: edx-platform\n"
 "Report-Msgid-Bugs-To: openedx-translation@googlegroups.com\n"
-"POT-Creation-Date: 2014-06-19 00:15-0400\n"
+"POT-Creation-Date: 2014-06-23 08:51-0400\n"
 "PO-Revision-Date: 2014-06-19 04:17+0000\n"
 "Last-Translator: Sarina Canelake <sarina@edx.org>\n"
 "Language-Team: Bulgarian (Bulgaria) (http://www.transifex.com/projects/p/edx-platform/language/bg_BG/)\n"
@@ -69,7 +69,7 @@ msgstr ""
 #: cms/templates/js/course_grade_policy.underscore
 #: cms/templates/js/show-textbook.underscore
 msgid "Delete"
-msgstr ""
+msgstr "Изтрий"
 
 #: common/lib/xmodule/xmodule/js/src/annotatable/display.js
 msgid "Show Annotations"
@@ -359,6 +359,10 @@ msgstr ""
 msgid "Turn off captions"
 msgstr ""
 
+#: common/lib/xmodule/xmodule/public/js/split_test_author_view.js
+msgid "Creating missing groups&hellip;"
+msgstr ""
+
 #: common/static/coffee/src/discussion/discussion_module_view.js
 #: common/static/coffee/src/discussion/discussion_module_view.js
 msgid "Hide Discussion"
@@ -470,6 +474,14 @@ msgstr ""
 msgid ""
 "No results found for %(original_query)s. Showing results for "
 "%(suggested_query)s."
+msgstr ""
+
+#: common/static/coffee/src/discussion/views/discussion_thread_list_view.js
+msgid "No threads matched your query."
+msgstr ""
+
+#: common/static/coffee/src/discussion/views/discussion_thread_list_view.js
+msgid "Show posts by %(username)s."
 msgstr ""
 
 #: common/static/coffee/src/discussion/views/discussion_thread_show_view.js
@@ -675,7 +687,7 @@ msgstr ""
 
 #: common/static/js/vendor/ova/catch/js/catch.js
 msgid "Annotation"
-msgstr ""
+msgstr "Анотация"
 
 #: common/static/js/vendor/ova/catch/js/catch.js
 msgid "Start"
@@ -714,7 +726,7 @@ msgstr ""
 #: common/static/js/vendor/ova/catch/js/catch.js
 #: common/static/js/vendor/ova/catch/js/catch.js
 msgid "Search"
-msgstr ""
+msgstr "Търсене"
 
 #: common/static/js/vendor/ova/catch/js/catch.js
 #: common/static/js/vendor/ova/catch/js/catch.js
@@ -747,7 +759,7 @@ msgstr ""
 
 #: common/static/js/vendor/ova/catch/js/catch.js
 msgid "Text"
-msgstr ""
+msgstr "Текст"
 
 #: common/static/js/vendor/ova/catch/js/catch.js
 msgid "Video"
@@ -765,7 +777,7 @@ msgstr ""
 #: cms/templates/js/show-textbook.underscore
 #: cms/templates/js/mock/mock-container-page.underscore
 msgid "Edit"
-msgstr ""
+msgstr "Редактирай"
 
 #: common/static/js/vendor/ova/catch/js/catch.js
 msgid "Tags:"
@@ -929,7 +941,7 @@ msgstr ""
 #: lms/static/coffee/src/customwmd.js
 #: cms/templates/js/asset-library.underscore
 msgid "Preview"
-msgstr ""
+msgstr "Прегледай"
 
 #: lms/static/coffee/src/customwmd.js
 msgid "Post body"
@@ -1615,6 +1627,10 @@ msgstr ""
 
 #: cms/static/coffee/src/views/unit.js cms/static/js/views/pages/container.js
 msgid "Yes, delete this component"
+msgstr ""
+
+#: cms/static/coffee/src/xblock/cms.runtime.v1.js
+msgid "OpenAssessment Save Error"
 msgstr ""
 
 #: cms/static/js/base.js

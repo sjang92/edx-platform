@@ -1,5 +1,5 @@
 # #-#-#-#-#  django-partial.po (edx-platform)  #-#-#-#-#
-# edX translation file.
+# edX community translations have been downloaded from Spanish (Latin America) (http://www.transifex.com/projects/p/edx-platform/language/es_419/).
 # Copyright (C) 2014 EdX
 # This file is distributed under the GNU AFFERO GENERAL PUBLIC LICENSE.
 # 
@@ -42,7 +42,7 @@
 # Natalia, 2013
 # Natalia, 2014
 # #-#-#-#-#  mako.po (edx-platform)  #-#-#-#-#
-# edX translation file
+# edX community translations have been downloaded from Spanish (Latin America) (http://www.transifex.com/projects/p/edx-platform/language/es_419/)
 # Copyright (C) 2014 edX
 # This file is distributed under the GNU AFFERO GENERAL PUBLIC LICENSE.
 # 
@@ -113,7 +113,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: edx-platform\n"
 "Report-Msgid-Bugs-To: openedx-translation@googlegroups.com\n"
-"POT-Creation-Date: 2014-06-19 00:16-0400\n"
+"POT-Creation-Date: 2014-06-23 08:52-0400\n"
 "PO-Revision-Date: 2014-03-01 15:39+0000\n"
 "Last-Translator: Cristian Salamea <ovnicraft@gmail.com>\n"
 "Language-Team: Spanish (Latin America) (http://www.transifex.com/projects/p/edx-platform/language/es_419/)\n"
@@ -2125,7 +2125,7 @@ msgstr ""
 #: common/lib/xmodule/xmodule/textannotation_module.py
 #: common/lib/xmodule/xmodule/videoannotation_module.py
 msgid "Mode for Annotation Tool"
-msgstr ""
+msgstr "Modo para Herramienta de anotación"
 
 #: common/lib/xmodule/xmodule/imageannotation_module.py
 #: common/lib/xmodule/xmodule/textannotation_module.py
@@ -2165,6 +2165,9 @@ msgid ""
 "Enter the URL of the external tool that this component launches. This "
 "setting is only used when Hide External Tool is set to False.<br />See "
 msgstr ""
+"Ingrese el URL de la herramienta externa que inicia este componente. Esta "
+"configuración es utilizada cuando la opción OCULTAR LA HERRAMIENTA EXTERNA  "
+"está en FALSO.<br />Ver"
 
 #: common/lib/xmodule/xmodule/lti_module.py
 msgid "Custom Parameters"
@@ -2175,6 +2178,9 @@ msgid ""
 "Add the key/value pair for any custom parameters, such as the page your "
 "e-book should open to or the background color for this component.<br />See "
 msgstr ""
+"Añada el par clave / valor para los parámetros personalizados, como la "
+"página de su libro electrónico debe abrir o el color de fondo para este "
+"componente. <br /> Ver"
 
 #: common/lib/xmodule/xmodule/lti_module.py
 msgid "Open in New Page"
@@ -2187,6 +2193,11 @@ msgid ""
 "in the current page. This setting is only used when Hide External Tool is "
 "set to False.  "
 msgstr ""
+"Seleccione Verdadero si desea que los estudiantes hagan clic en un vínculo "
+"que abre la herramienta de LTI en una nueva ventana. Seleccione Falso si "
+"desea que el contenido de LTI se abra en un iframe en la página actual. Esta"
+" opción sólo se utiliza cuando herramienta externa Hide se establece en "
+"False."
 
 #: common/lib/xmodule/xmodule/lti_module.py
 msgid "Scored"
@@ -2270,6 +2281,8 @@ msgid ""
 "The location of the problem being graded. Only used when \"Show Single "
 "Problem\" is True."
 msgstr ""
+"La ubicación del problema que está siendo evaluado. Utilizado únicamente "
+"cuando \"Mostrar Único Problema\" es Verdadero"
 
 #: common/lib/xmodule/xmodule/peer_grading_module.py
 msgid ""
@@ -2283,11 +2296,11 @@ msgstr ""
 
 #: common/lib/xmodule/xmodule/peer_grading_module.py
 msgid "Amount of grace to give on the due date."
-msgstr ""
+msgstr "Período de gracia de otorgar en las fechas de entrega."
 
 #: common/lib/xmodule/xmodule/peer_grading_module.py
 msgid "Student data for a given peer grading problem."
-msgstr ""
+msgstr "Data del estudiante para un problema específico evaluado entre pares"
 
 #: common/lib/xmodule/xmodule/peer_grading_module.py
 msgid "Peer Grading Interface"
@@ -2319,6 +2332,8 @@ msgid ""
 "This name is used for organizing your course content, but is not shown to "
 "students."
 msgstr ""
+"Este nombre sirve para organizar su contenido de curso, pero no se le "
+"muestra a los estudiantes."
 
 #: common/lib/xmodule/xmodule/split_test_module.py
 msgid "Content Experiment"
@@ -2332,39 +2347,46 @@ msgstr ""
 
 #: common/lib/xmodule/xmodule/split_test_module.py
 msgid ""
-"The configuration for how users are grouped for this content experiment. "
-"After you select the group configuration and save the content experiment, "
-"you cannot change this setting."
+"The configuration defines how users are grouped for this content experiment."
+" Caution: Changing the group configuration of a student-visible experiment "
+"will impact the experiment data."
 msgstr ""
 
 #: common/lib/xmodule/xmodule/split_test_module.py
 msgid "Group Configuration"
-msgstr ""
+msgstr "Configuración de Grupo"
 
 #: common/lib/xmodule/xmodule/split_test_module.py
 msgid "Which child module students in a particular group_id should see"
 msgstr ""
 
 #: common/lib/xmodule/xmodule/split_test_module.py
-#: lms/templates/split_test_studio_header.html
-msgid "You must select a group configuration for this content experiment."
-msgstr "Debe seleccionar una  configuración de grupo para este contenido."
+msgid "The experiment is not associated with a group configuration."
+msgstr ""
+
+#: common/lib/xmodule/xmodule/split_test_module.py
+msgid "Select a Group Configuration"
+msgstr "Seleccione una configuración de grupo"
 
 #: common/lib/xmodule/xmodule/split_test_module.py
 msgid ""
-"This content experiment will not be shown to students because it refers to a"
-" group configuration that has been deleted. You can delete this experiment "
-"or reinstate the group configuration to repair it."
+"The experiment uses a deleted group configuration. Select a valid group "
+"configuration or delete this experiment."
 msgstr ""
 
 #: common/lib/xmodule/xmodule/split_test_module.py
 msgid ""
-"This content experiment is in an invalid state and cannot be repaired. "
-"Please delete and recreate."
+"The experiment does not contain all of the groups in the configuration."
 msgstr ""
 
 #: common/lib/xmodule/xmodule/split_test_module.py
-msgid "This content experiment uses group configuration '{experiment_name}'."
+msgid "Add Missing Groups"
+msgstr ""
+
+#: common/lib/xmodule/xmodule/split_test_module.py
+msgid ""
+"The experiment has an inactive group. Move content into active groups, then "
+"delete the inactive group."
 msgstr ""
 
 #. #-#-#-#-#  django-partial.po (edx-platform)  #-#-#-#-#
@@ -3186,10 +3208,12 @@ msgstr ""
 "No fue posible cambiar la la rama especificada. Por favor verifique el "
 "nombre de la misma."
 
-#: cms/templates/login.html cms/templates/register.html
+#: lms/djangoapps/dashboard/support.py cms/templates/login.html
+#: cms/templates/register.html
 msgid "Email Address"
 msgstr "Dirección de correo electrónico"
 
+#: lms/djangoapps/dashboard/support.py
 #: lms/templates/sysadmin_dashboard_gitlogs.html
 #: lms/templates/sysadmin_dashboard_gitlogs.html
 msgid "Course ID"
@@ -3632,6 +3656,7 @@ msgstr "Descarga de Datos"
 msgid "Analytics"
 msgstr "Analíticas"
 
+#: lms/djangoapps/instructor/views/instructor_dashboard.py
 #: lms/templates/courseware/instructor_dashboard.html
 msgid "Metrics"
 msgstr "Métricas"
@@ -7480,15 +7505,27 @@ msgstr "¿Ya está registrado?"
 msgid "Login."
 msgstr "Iniciar Sesión"
 
+#: lms/templates/split_test_author_view.html
+msgid "This content experiment uses group configuration '{experiment_name}'."
+msgstr ""
+
+#: lms/templates/split_test_author_view.html
+msgid "This content experiment has issues that affect content visibility."
+msgstr ""
+
+#: lms/templates/split_test_author_view.html
+msgid "Active Groups"
+msgstr ""
+
+#: lms/templates/split_test_author_view.html
+msgid "Inactive Groups"
+msgstr ""
+
 #. Translators: The 'Group' here refers to the group of users that has been
 #. sorted into group_id
 #: lms/templates/split_test_staff_view.html
 msgid "Group {group_id}"
 msgstr "Grupo {group_id}"
-
-#: lms/templates/split_test_studio_header.html
-msgid "Select a Group Configuration"
-msgstr "Seleccione una configuración de grupo"
 
 #: lms/templates/staff_problem_info.html
 msgid "Staff Debug Info"
@@ -15133,26 +15170,6 @@ msgstr "Cómo usar edX Studio para crear su curso"
 #: cms/templates/widgets/sock.html
 msgid "Have problems, questions, or suggestions about edX Studio?"
 msgstr "¿Tiene problemas, preguntas o sugerencias sobre edX Studio?"
-
-#: cms/templates/widgets/split-edit.html
-msgid ""
-"This content experiment refers to a group configuration that has been "
-"deleted."
-msgstr ""
-"Este contenido hace referencia a una configuración de grupo que ha sido "
-"borrada."
-
-#: cms/templates/widgets/split-edit.html
-msgid "This content experiment uses group configuration '{0}'."
-msgstr "Este contenido utiliza la configuración de grupo '{0}'."
-
-#: cms/templates/widgets/split-edit.html
-msgid ""
-"After you select the group configuration and save the content experiment, "
-"you cannot change this setting."
-msgstr ""
-"Después de seleccionar la configuración de grupo y guardar el contenido, no "
-"puede cambiar esta propiedad."
 
 #: cms/templates/widgets/tabs-aggregator.html
 msgid "name"
