@@ -49,6 +49,7 @@
 # abdallah.nassif <abdallah_n@hotmail.com>, 2013
 # Ahmad AbdArrahman <mygooglizer@gmail.com>, 2013-2014
 # ayshibly <ayshibly@gmail.com>, 2014
+# baraahadri <baraahadri@gmail.com>, 2014
 # طاهر <charaf.le.prince@gmail.com>, 2014
 # Hani <hani0a@hotmail.com>, 2014
 # Hassan05 <hassan.upb@gmail.com>, 2014
@@ -492,7 +493,7 @@ msgstr "البريد الإلكتروني القديم مطابق للبريد �
 
 #: common/djangoapps/student/views.py
 msgid "Unable to send email activation link. Please try again later."
-msgstr ""
+msgstr "ليس بالإمكان إرسال رابط لتفعيل البريد الإلكتروني."
 
 #: common/djangoapps/student/views.py
 msgid "Name required"
@@ -967,12 +968,13 @@ msgstr ""
 
 #: common/lib/capa/capa/inputtypes.py
 msgid "{input_type}: unexpected tag {tag_name}"
-msgstr ""
+msgstr "{input_type}: بطاقة تعريف غير متوقّعة {tag_name}"
 
 #. Translators: a "tag" is an XML element, such as "<b>" in HTML
 #: common/lib/capa/capa/inputtypes.py
 msgid "Expected a {expected_tag} tag; got {given_tag} instead"
 msgstr ""
+"توقّع بطاقة تعريف {expected_tag}؛ تمّ الحصول على  {given_tag} بدلاً من ذلك"
 
 #: common/lib/capa/capa/responsetypes.py
 msgid "Error {err} in evaluating hint function {hintfn}."
@@ -2037,7 +2039,7 @@ msgstr "تسلسل الحروف الرمزي السري للحواشي"
 #: common/lib/xmodule/xmodule/textannotation_module.py
 #: common/lib/xmodule/xmodule/videoannotation_module.py
 msgid "Default Annotations Tab"
-msgstr ""
+msgstr "علامة تبويب الحواشي الأساسية"
 
 #: common/lib/xmodule/xmodule/imageannotation_module.py
 #: common/lib/xmodule/xmodule/textannotation_module.py
@@ -2046,12 +2048,14 @@ msgid ""
 "Select which tab will be the default in the annotations table: myNotes, "
 "Instructor, or Public."
 msgstr ""
+"اختيار علامة التبويب التي ستكون الأساسية في جدول الحواشي: myNotes، أو موجّه "
+"المساق، أو عمومي."
 
 #: common/lib/xmodule/xmodule/imageannotation_module.py
 #: common/lib/xmodule/xmodule/textannotation_module.py
 #: common/lib/xmodule/xmodule/videoannotation_module.py
 msgid "Email for 'Instructor' Annotations"
-msgstr ""
+msgstr "البريد الإلكتروني للحواشي الخاصّة بـ \"موجّه المساق\""
 
 #: common/lib/xmodule/xmodule/imageannotation_module.py
 #: common/lib/xmodule/xmodule/textannotation_module.py
@@ -2060,19 +2064,21 @@ msgid ""
 "Email of the user that will be attached to all annotations that will be "
 "found in 'Instructor' tab."
 msgstr ""
+"البريد الإلكتروني الخاص بالمستخدم الذي سيتمّ إرفاقه بكافة الحواشي التي سيتمّ"
+" العثور عليها في علامة التبويب الخاصة بـ \"موجّه المساق\"."
 
 #: common/lib/xmodule/xmodule/imageannotation_module.py
 #: common/lib/xmodule/xmodule/textannotation_module.py
 #: common/lib/xmodule/xmodule/videoannotation_module.py
 msgid "Mode for Annotation Tool"
-msgstr ""
+msgstr "الوضع بالنسبة لأداة الحواشي"
 
 #: common/lib/xmodule/xmodule/imageannotation_module.py
 #: common/lib/xmodule/xmodule/textannotation_module.py
 #: common/lib/xmodule/xmodule/videoannotation_module.py
 msgid ""
 "Type in number corresponding to following modes:  'instructor' or 'everyone'"
-msgstr ""
+msgstr "كتابة الرقم المرتبط بالأوضاع التالية: \"موجّه المساق\" أو \"الجميع\""
 
 #: common/lib/xmodule/xmodule/lti_module.py
 msgid ""
@@ -2260,8 +2266,13 @@ msgstr "واجهة تقييم النظراء"
 #. e.g. "Warning: this component has not been configured yet".
 #: common/lib/xmodule/xmodule/split_test_module.py
 msgid "Warning"
-msgstr ""
+msgstr "تحذير"
 
+#. #-#-#-#-#  django-partial.po (edx-platform)  #-#-#-#-#
+#. Translators: This message will be added to the front of messages of type
+#. error,
+#. e.g. "Error: required field is missing".
+#: common/lib/xmodule/xmodule/split_test_module.py
 #: lms/templates/name_changes.html lms/templates/name_changes.html
 #: lms/templates/sysadmin_dashboard_gitlogs.html
 msgid "Error"
@@ -2269,23 +2280,24 @@ msgstr "خطأ"
 
 #: common/lib/xmodule/xmodule/split_test_module.py
 msgid "Not Selected"
-msgstr ""
+msgstr "لم يتمّ اختياره"
 
 #: common/lib/xmodule/xmodule/split_test_module.py
 msgid ""
 "This name is used for organizing your course content, but is not shown to "
 "students."
 msgstr ""
+"يستخدم هذا الإسم لتنظيم محتوى المساق الخاص بك، ولكنّه ليس ظاهراً للطلاب."
 
 #: common/lib/xmodule/xmodule/split_test_module.py
 msgid "Content Experiment"
-msgstr ""
+msgstr "اختبار المحتوى"
 
 #: common/lib/xmodule/xmodule/split_test_module.py
 msgid ""
 "The list of group configurations for partitioning students in content "
 "experiments."
-msgstr ""
+msgstr "قائمة إعدادات المجموعة لتقسيم الطلاب في اختبارات المجموعة."
 
 #: common/lib/xmodule/xmodule/split_test_module.py
 msgid ""
@@ -2293,19 +2305,26 @@ msgid ""
 "After you select the group configuration and save the content experiment, "
 "you cannot change this setting."
 msgstr ""
+"إعداد كيفية جمع المستخدمين فيما يخص اختبار المحتوى هذا. بعد اختيار إعداد "
+"المجموعة وحفظ اختبار المحتوى، لا يمكنك تغيير هذا الإعداد."
 
 #: common/lib/xmodule/xmodule/split_test_module.py
 msgid "Group Configuration"
-msgstr ""
+msgstr "إعداد المجموعة"
 
 #: common/lib/xmodule/xmodule/split_test_module.py
 msgid "Which child module students in a particular group_id should see"
-msgstr ""
+msgstr "ما هي الوحدة الفرعية في group_id محدّد يجب أن يراها الطلاب"
 
 #: common/lib/xmodule/xmodule/split_test_module.py
 #: lms/templates/split_test_studio_header.html
+#, fuzzy
 msgid "You must select a group configuration for this content experiment."
 msgstr ""
+"#-#-#-#-#  django-partial.po (edx-platform)  #-#-#-#-#\n"
+"يجب اختيار أحد إعدادات المجموعة لاختبار المحتوى هذا.\n"
+"#-#-#-#-#  mako.po (edx-platform)  #-#-#-#-#\n"
+"يجب اختيار أحد إعدادت المجموعة لاختبار المحتوى هذا."
 
 #: common/lib/xmodule/xmodule/split_test_module.py
 msgid ""
@@ -2313,16 +2332,20 @@ msgid ""
 " group configuration that has been deleted. You can delete this experiment "
 "or reinstate the group configuration to repair it."
 msgstr ""
+"لن يظهر اختبار المحتوى هذا للطلاب لأنّه يرجع إلى أحد إعدادات المجموعة التي "
+"قد تمّ حذفها. بإمكانك حذف هذا الاختبار أو  استرجاع إعداد المجموعة لإصلاحه."
 
 #: common/lib/xmodule/xmodule/split_test_module.py
 msgid ""
 "This content experiment is in an invalid state and cannot be repaired. "
 "Please delete and recreate."
 msgstr ""
+"اختبار المحتوى هذا في حالة غير صحيحة ولا يمكن إصلاحه. الرجاء حذفه وإعادة "
+"إنشائه."
 
 #: common/lib/xmodule/xmodule/split_test_module.py
 msgid "This content experiment uses group configuration '{experiment_name}'."
-msgstr ""
+msgstr "يستخدم اختبار المحتوى هذا إعداد المجموعة '{experiment_name}'."
 
 #. #-#-#-#-#  django-partial.po (edx-platform)  #-#-#-#-#
 #. Translators: 'Courseware' refers to the tab in the courseware that leads to
@@ -3213,7 +3236,7 @@ msgstr "لا يوجد مستخدم له اسم المستخدم {0} - {1}"
 
 #: lms/djangoapps/dashboard/sysadmin.py
 msgid "Deleted user {0}"
-msgstr "هذا المستخدم محذوف"
+msgstr "هذا المستخدم محذوف {0}"
 
 #: lms/djangoapps/dashboard/sysadmin.py
 msgid "Statistic"
@@ -6496,9 +6519,9 @@ msgid ""
 "lots of helpful information in the {platform_name} "
 "{link_start}FAQ{link_end}."
 msgstr ""
-"لديك أسئلة عامة تتعلق بـ {platform_name}</strong>؟ بإمكانك أن تجد الكثير من "
-"المعلومات المفيدة في صفحة  {platform_name} {link_start}الأسئلة "
-"المتكررة{link_end}."
+"لديك أسئلة عامة<strong> تتعلق بـ {platform_name}</strong>؟ بإمكانك أن تجد "
+"الكثير من المعلومات المفيدة في صفحة  {platform_name} {link_start}الأسئلة "
+"المتكررة{link_end}. "
 
 #: lms/templates/help_modal.html
 msgid ""
@@ -6646,7 +6669,7 @@ msgstr "الرجاء إعادة المحاولة لاحقاً."
 
 #: lms/templates/imageannotation.html
 msgid "Note: only instructors may annotate."
-msgstr ""
+msgstr "ملاحظة: يمكن فقط للمشرفين التعليق"
 
 #: lms/templates/index.html
 msgid "Free courses from <strong>{university_name}</strong>"
@@ -6971,8 +6994,8 @@ msgid ""
 "recommend using {chrome_link_start}Chrome{chrome_link_end} or "
 "{ff_link_start}Firefox{ff_link_end}."
 msgstr ""
-"تحذير: المتصفح الذي تستخدمه غير مدعوم بشكل كامل، نوصي بشدة باستعمال "
-"{chrome_link_start}كروم{chrome_link_end} أو "
+"تحذير<strong>:</strong> المتصفح الذي تستخدمه غير مدعوم بشكل كامل، نوصي بشدة "
+"باستعمال {chrome_link_start}كروم{chrome_link_end} أو "
 "{ff_link_start}فايرفوكس{ff_link_end}."
 
 #: lms/templates/notes.html lms/templates/textannotation.html
@@ -7335,7 +7358,7 @@ msgstr "المجموعة {group_id}"
 
 #: lms/templates/split_test_studio_header.html
 msgid "Select a Group Configuration"
-msgstr ""
+msgstr "اختيار أحد إعدادت المجموعة"
 
 #: lms/templates/staff_problem_info.html
 msgid "Staff Debug Info"
@@ -7703,7 +7726,7 @@ msgstr "تنزيل الفيديو "
 
 #: lms/templates/video.html lms/templates/video.html
 msgid "Download transcript"
-msgstr "تنزيل سجل الدرجات"
+msgstr "حمل نص الترجمة"
 
 #: lms/templates/video.html
 msgid "Download Handout"
@@ -10102,7 +10125,7 @@ msgid ""
 "{format_string})."
 msgstr ""
 "حدّد تاريخ وتوقيت التمديد (بحسب التوقيت العالمي؛ الرجاء استخدام الصيغة "
-"{شهر/يوم/سنة ساعة:دقيقة})."
+"{format_string})."
 
 #: lms/templates/instructor/instructor_dashboard_2/extensions.html
 msgid "Change due date for student"
@@ -14835,17 +14858,19 @@ msgstr "هل لديك مشاكل، أسئلة، أو إقتراحات حول ب�
 msgid ""
 "This content experiment refers to a group configuration that has been "
 "deleted."
-msgstr ""
+msgstr "يشير اختبار المحتوى هذا إلى أحد إعدادت المجموعة التي قد تمّ حذفها."
 
 #: cms/templates/widgets/split-edit.html
 msgid "This content experiment uses group configuration '{0}'."
-msgstr ""
+msgstr "يستخدم اختبار المحتوى هذا إعداد المجموعة '{0}'."
 
 #: cms/templates/widgets/split-edit.html
 msgid ""
 "After you select the group configuration and save the content experiment, "
 "you cannot change this setting."
 msgstr ""
+"بعد اختيار أحد إعدادات المجموعة وحفظ اختبار المحتوى، لا يمكنك تغيير هذا "
+"الإعداد."
 
 #: cms/templates/widgets/tabs-aggregator.html
 msgid "name"

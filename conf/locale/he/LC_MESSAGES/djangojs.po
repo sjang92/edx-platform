@@ -64,7 +64,7 @@ msgstr ""
 #: cms/static/js/base.js lms/static/js/verify_student/photocapture.js
 #: cms/templates/js/checklist.underscore
 msgid "This link will open in a new browser window/tab"
-msgstr ""
+msgstr "קישור זה יפתח בחלון/טאב חדש"
 
 #: cms/static/js/views/asset.js cms/static/js/views/show_textbook.js
 #: common/static/js/vendor/ova/catch/js/catch.js
@@ -1608,19 +1608,19 @@ msgstr ""
 
 #: cms/static/js/base.js
 msgid "This link will open in a modal window"
-msgstr ""
+msgstr "קישור זה יפתח בחלון חדש"
 
 #: cms/static/js/base.js
 msgid "Delete this "
-msgstr ""
+msgstr "מחק זאת"
 
 #: cms/static/js/base.js
 msgid "Deleting this "
-msgstr ""
+msgstr "מוחק זאת"
 
 #: cms/static/js/base.js
 msgid "Yes, delete this "
-msgstr ""
+msgstr "כן, מחק"
 
 #: cms/static/js/index.js
 msgid "Please do not use any spaces in this field."
@@ -1788,11 +1788,11 @@ msgstr ""
 
 #: cms/static/js/views/overview.js
 msgid "Collapse All Sections"
-msgstr ""
+msgstr "סגור את כל החלקים"
 
 #: cms/static/js/views/overview.js
 msgid "Expand All Sections"
-msgstr ""
+msgstr "פתח את כל החלקים"
 
 #: cms/static/js/views/overview.js
 msgid "Release date:"
