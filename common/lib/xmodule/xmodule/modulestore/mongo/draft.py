@@ -503,17 +503,7 @@ class DraftModuleStore(MongoModuleStore):
             return False
 
         draft = self.get_item(location)
-
-        # If the draft was never published, then it clearly has unpublished changes
-        if not draft.published_date:
-            return True
-
-        # edited_on may be None if the draft was last edited before edit time tracking
-        # If the draft does not have an edit time, we play it safe and assume there are differences
-        if draft.edited_on:
-            return draft.edited_on > draft.published_date
-        else:
-            return True
+        return draft.has_changes
 
     def publish(self, location, user_id):
         """

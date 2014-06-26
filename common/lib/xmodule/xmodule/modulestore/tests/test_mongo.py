@@ -528,6 +528,18 @@ class TestMongoModuleStore(unittest.TestCase):
         self.draft_store.publish(location, dummy_user)
         self.assertFalse(self.draft_store.has_changes(location))
 
+    def test_has_changes_parents(self):
+        """
+        Tests that has_changes() returns true on parents when a child is changed
+        """
+        self.fail("needs to be implemented")
+
+    def test_has_changes_publish_parents(self):
+        """
+        Tests that has_changes() returns false after a child is published only if all children are unchanged
+        """
+        self.fail("needs to be implemented")
+
     def test_update_edit_info(self):
         """
         Tests that edited_on and edited_by are set correctly during an update

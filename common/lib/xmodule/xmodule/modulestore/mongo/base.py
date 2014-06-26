@@ -230,7 +230,9 @@ class CachingDescriptorSystem(MakoDescriptorSystem):
 
                 # migrate published_by and published_date if edit_info isn't present
                 if not edit_info:
-                    module.edited_by = module.edited_on = module.published_date = None
+                    module.edited_by = module.edited_on = module.subtree_edited_on = \
+                        module.subtree_edited_by = module.published_date = None
+                    module.has_changes = True
                     # published_date was previously stored as a list of time components instead of a datetime
                     if metadata.get('published_date'):
                         module.published_date = datetime(*metadata.get('published_date')[0:6]).replace(tzinfo=UTC)
@@ -239,8 +241,11 @@ class CachingDescriptorSystem(MakoDescriptorSystem):
                 else:
                     module.edited_by = edit_info.get('edited_by')
                     module.edited_on = edit_info.get('edited_on')
+                    module.subtree_edited_on = edit_info.get('subtree_edited_on')
+                    module.subtree_edited_by = edit_info.get('subtree_edited_by')
                     module.published_date = edit_info.get('published_date')
                     module.published_by = edit_info.get('published_by')
+                    module.has_changes = edit_info.get('has_changes', True)
 
                 # decache any computed pending field settings
                 module.save()
@@ -944,6 +949,17 @@ class MongoModuleStore(ModuleStoreWriteBase):
         if result['n'] == 0:
             raise ItemNotFoundError(location)
 
+    def _update_all_parents(self, location, update, filter=None):
+        """
+        Recursively applies update to all the parents of location as long as filter returns True.
+        """
+        for parent in self.get_parent_locations(location):
+            if filter:
+                if not filter(parent):
+                    continue
+            self._update_single_item(parent, update)
+            self._update_all_parents(parent, update, filter)
+
     def update_item(self, xblock, user_id=None, allow_not_found=False, force=False, isPublish=False):
         """
         Update the persisted version of xblock to reflect its current values.
@@ -960,12 +976,16 @@ class MongoModuleStore(ModuleStoreWriteBase):
                 xblock,
                 xblock.get_explicitly_set_fields_by_scope()
             )
+            now = datetime.now(UTC)
             payload = {
                 'definition.data': definition_data,
                 'metadata': self._convert_reference_fields_to_strings(xblock, own_metadata(xblock)),
                 'edit_info': {
-                    'edited_on': datetime.now(UTC),
+                    'edited_on': now,
                     'edited_by': user_id,
+                    'subtree_edited_on': now,
+                    'subtree_edited_by': user_id,
+                    'has_changes': not isPublish,
                 }
             }
 
@@ -977,6 +997,25 @@ class MongoModuleStore(ModuleStoreWriteBase):
                 children = self._convert_reference_fields_to_strings(xblock, {'children': xblock.children})
                 payload.update({'definition.children': children['children']})
             self._update_single_item(xblock.scope_ids.usage_id, payload)
+
+            # when publishing, has_changes shouldn't be set to false on a parent if a child still has changes
+            def children_are_unchanged(location):
+                for child in self.get_item(location).children:
+                    if child.has_changes:
+                        return False
+                return True
+
+            # update all parents with the new edited info
+            subtree_payload = {
+                'edit_info': {
+                    'subtree_edited_on': now,
+                    'subtree_edited_by': user_id,
+                }
+            }
+            has_changes_payload = { 'edit_info': { 'has_changes': not isPublish }}
+            self._update_all_parents(xblock.scope_ids.usage_id, subtree_payload)
+            self._update_all_parents(xblock.scope_ids.usage_id, has_changes_payload,
+                                     children_are_unchanged if isPublish else None)
 
             # recompute (and update) the metadata inheritance tree which is cached
             self.refresh_cached_metadata_inheritance_tree(xblock.scope_ids.usage_id.course_key, xblock.runtime)
