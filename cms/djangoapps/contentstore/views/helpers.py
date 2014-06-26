@@ -129,3 +129,18 @@ def xblock_type_display_name(xblock, default_display_name=None):
         return _(component_class.display_name.default)
     else:
         return default_display_name
+
+
+def xblock_primary_child_category(xblock):
+    """
+    Returns the primary child category for the specified xblock, or None if there is not a primary category.
+    """
+    category = xblock.category
+    if category == 'course':
+        return 'chapter'
+    elif category == 'chapter':
+        return 'sequential'
+    elif category == 'sequential':
+        return 'vertical'
+    return None
+
