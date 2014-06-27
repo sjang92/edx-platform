@@ -493,14 +493,10 @@ class DraftModuleStore(MongoModuleStore):
 
     def has_changes(self, location):
         """
-        Check if the xblock has been changed since it was last published.
+        Check if the xblock or its children have been changed since the last publish.
         :param location: location to check
         :return: True if the draft and published versions differ
         """
-
-        # Direct only categories can never have changes because they can't have drafts
-        if location.category in DIRECT_ONLY_CATEGORIES:
-            return False
 
         draft = self.get_item(location)
         return draft.has_changes

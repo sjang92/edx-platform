@@ -40,6 +40,7 @@ from xmodule.modulestore.inheritance import own_metadata, InheritanceMixin, inhe
 from xblock.core import XBlock
 from opaque_keys.edx.locations import SlashSeparatedCourseKey
 from xmodule.exceptions import HeartbeatFailure
+from .draft import DIRECT_ONLY_CATEGORIES
 
 log = logging.getLogger(__name__)
 
@@ -949,7 +950,7 @@ class MongoModuleStore(ModuleStoreWriteBase):
         if result['n'] == 0:
             raise ItemNotFoundError(location)
 
-    def _update_all_parents(self, location, update, filter=None):
+    def _update_ancestors(self, location, update, filter=None):
         """
         Recursively applies update to all the parents of location as long as filter returns True.
         """
@@ -958,7 +959,7 @@ class MongoModuleStore(ModuleStoreWriteBase):
                 if not filter(parent):
                     continue
             self._update_single_item(parent, update)
-            self._update_all_parents(parent, update, filter)
+            self._update_ancestors(parent, update, filter)
 
     def update_item(self, xblock, user_id=None, allow_not_found=False, force=False, isPublish=False):
         """
@@ -985,9 +986,11 @@ class MongoModuleStore(ModuleStoreWriteBase):
                     'edited_by': user_id,
                     'subtree_edited_on': now,
                     'subtree_edited_by': user_id,
-                    'has_changes': not isPublish,
                 }
             }
+
+            if xblock.category not in DIRECT_ONLY_CATEGORIES:
+                payload['edit_info']['has_changes'] = not isPublish
 
             if isPublish:
                 payload['edit_info']['published_date'] = datetime.now(UTC)
@@ -998,24 +1001,25 @@ class MongoModuleStore(ModuleStoreWriteBase):
                 payload.update({'definition.children': children['children']})
             self._update_single_item(xblock.scope_ids.usage_id, payload)
 
-            # when publishing, has_changes shouldn't be set to false on a parent if a child still has changes
-            def children_are_unchanged(location):
-                for child in self.get_item(location).children:
-                    if child.has_changes:
-                        return False
-                return True
-
-            # update all parents with the new edited info
+            # update ancestors with the new edited info
             subtree_payload = {
                 'edit_info': {
                     'subtree_edited_on': now,
                     'subtree_edited_by': user_id,
                 }
             }
-            has_changes_payload = { 'edit_info': { 'has_changes': not isPublish }}
-            self._update_all_parents(xblock.scope_ids.usage_id, subtree_payload)
-            self._update_all_parents(xblock.scope_ids.usage_id, has_changes_payload,
-                                     children_are_unchanged if isPublish else None)
+            self._update_ancestors(xblock.scope_ids.usage_id, subtree_payload)
+
+            if xblock.category not in DIRECT_ONLY_CATEGORIES:
+                # when publishing, has_changes shouldn't be set to false on a parent if a child still has changes
+                def children_are_unchanged(location):
+                    for child in self.get_item(location).children:
+                        if child.has_changes:
+                            return False
+                    return True
+                has_changes_payload = { 'edit_info': { 'has_changes': not isPublish }}
+                self._update_ancestors(xblock.scope_ids.usage_id, has_changes_payload,
+                                       children_are_unchanged if isPublish else None)
 
             # recompute (and update) the metadata inheritance tree which is cached
             self.refresh_cached_metadata_inheritance_tree(xblock.scope_ids.usage_id.course_key, xblock.runtime)
