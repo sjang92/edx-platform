@@ -35,7 +35,7 @@ from xmodule.modulestore.exceptions import ItemNotFoundError
 from xmodule.modulestore.inheritance import own_metadata
 from opaque_keys.edx.keys import UsageKey
 from opaque_keys.edx.locations import SlashSeparatedCourseKey, AssetLocation
-from xmodule.modulestore.store_utilities import clone_course, delete_course
+from xmodule.modulestore.store_utilities import delete_course
 from xmodule.modulestore.tests.django_utils import ModuleStoreTestCase
 from xmodule.modulestore.tests.factories import CourseFactory, ItemFactory
 from xmodule.modulestore.xml_exporter import export_to_xml
@@ -98,6 +98,11 @@ class ContentStoreTestCase(ModuleStoreTestCase):
 
         self.client = AjaxEnabledTestClient()
         self.client.login(username=uname, password=password)
+
+        # TODO remove after merge of opaque urls
+        if not hasattr(AssetLocation, 'deprecated'):
+            setattr(AssetLocation, 'deprecated', True)
+            setattr(SlashSeparatedCourseKey, 'deprecated', True)
 
 
 class ContentStoreToyCourseTest(ContentStoreTestCase):
@@ -172,7 +177,7 @@ class ContentStoreToyCourseTest(ContentStoreTestCase):
         """
         course_assets, __ = content_store.get_all_content_for_course(course_id)
         self.assertGreater(len(course_assets), 0, "No assets to lock")
-        asset_id = course_assets[0]['_id']
+        asset_id = course_assets[0].get('content_son', course_assets[0]['_id'])
         asset_key = StaticContent.compute_location(course_id, asset_id['name'])
         content_store.set_attr(asset_key, 'locked', True)
         return asset_key
@@ -426,7 +431,10 @@ class ContentStoreToyCourseTest(ContentStoreTestCase):
         content_store = contentstore()
 
         module_store = modulestore()
-        import_from_xml(module_store, self.user.id, 'common/test/data/', ['toy'], static_content_store=content_store, verbose=True)
+        import_from_xml(
+            module_store, self.user.id, 'common/test/data/', ['toy'],
+            static_content_store=content_store, verbose=True
+        )
 
         course = module_store.get_course(SlashSeparatedCourseKey('edX', 'toy', '2012_Fall'))
 
@@ -655,10 +663,8 @@ class ContentStoreToyCourseTest(ContentStoreTestCase):
 
         _create_course(self, dest_course_id, course_data)
 
-        content_store = contentstore()
-
         # now do the actual cloning
-        clone_course(module_store, content_store, source_course_id, dest_course_id, self.user.id)
+        module_store.clone_course(source_course_id, dest_course_id, self.user.id)
 
         # first assert that all draft content got cloned as well
         draft_items = module_store.get_items(source_course_id, revision=ModuleStoreEnum.RevisionOption.draft_only)
@@ -707,7 +713,6 @@ class ContentStoreToyCourseTest(ContentStoreTestCase):
         }
 
         module_store = modulestore()
-        content_store = contentstore()
 
         import_from_xml(module_store, self.user.id, 'common/test/data/', ['toy'])
 
@@ -730,7 +735,7 @@ class ContentStoreToyCourseTest(ContentStoreTestCase):
         _create_course(self, dest_course_id, course_data)
 
         # do the actual cloning
-        clone_course(module_store, content_store, source_course_id, dest_course_id, self.user.id)
+        module_store.clone_course(source_course_id, dest_course_id, self.user.id)
 
         # make sure that any non-portable links are rewritten during cloning
         html_module = module_store.get_item(dest_course_id.make_usage_key('html', 'nonportable'))
@@ -987,7 +992,7 @@ class ContentStoreToyCourseTest(ContentStoreTestCase):
         locked_asset_key = locked_asset_key.map_into_course(course_id)
         new_attrs = content_store.get_attrs(locked_asset_key)
         for key, value in locked_asset_attrs.iteritems():
-            if key == '_id':
+            if key in ['_id', 'content_son']:
                 self.assertEqual(value['name'], new_attrs[key]['name'])
             elif key == 'filename':
                 pass

@@ -10,6 +10,7 @@ from xmodule.modulestore.django import loc_mapper
 from opaque_keys.edx.keys import CourseKey
 from opaque_keys import InvalidKeyError
 from opaque_keys.edx.locations import SlashSeparatedCourseKey
+from xmodule.modulestore import MONGO_MODULESTORE_TYPE, SPLIT_MONGO_MODULESTORE_TYPE
 
 
 def user_from_str(identifier):
@@ -66,9 +67,8 @@ class Command(BaseCommand):
         course_key, user, org, offering = self.parse_args(*args)
 
         migrator = SplitMigrator(
-            draft_modulestore=modulestore('default'),
-            direct_modulestore=modulestore('direct'),
-            split_modulestore=modulestore('split'),
+            draft_modulestore=modulestore()._get_modulestore_by_type(MONGO_MODULESTORE_TYPE),
+            split_modulestore=modulestore()._get_modulestore_by_type(SPLIT_MONGO_MODULESTORE_TYPE),
             loc_mapper=loc_mapper(),
         )
 

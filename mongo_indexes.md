@@ -29,6 +29,7 @@ which can be `uploadDate`, `display_name`,
 Replace existing index which leaves out `run` with this one:
 ```
 ensureIndex({'_id.tag': 1, '_id.org': 1, '_id.course': 1, '_id.category': 1, '_id.run': 1})
+ensureIndex({'content_son.tag': 1, 'content_son.org': 1, 'content_son.course': 1, 'content_son.category': 1, 'content_son.run': 1})
 ```
 
 Note: I'm not advocating adding one which leaves out `category` for now because that would only be

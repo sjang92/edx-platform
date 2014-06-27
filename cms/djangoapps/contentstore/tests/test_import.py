@@ -55,6 +55,11 @@ class ContentStoreImportTest(ModuleStoreTestCase):
         self.client = Client()
         self.client.login(username=uname, password=password)
 
+        # TODO remove after merge of opaque urls
+        if not hasattr(AssetLocation, 'deprecated'):
+            setattr(AssetLocation, 'deprecated', True)
+            setattr(SlashSeparatedCourseKey, 'deprecated', True)
+
     def tearDown(self):
         MongoClient().drop_database(TEST_DATA_CONTENTSTORE['DOC_STORE_CONFIG']['db'])
         _CONTENTSTORE.clear()

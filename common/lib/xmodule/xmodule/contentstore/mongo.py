@@ -16,6 +16,7 @@ from opaque_keys.edx.locations import AssetLocation
 
 
 class MongoContentStore(ContentStore):
+
     # pylint: disable=W0613
     def __init__(self, host, db, port=27017, user=None, password=None, bucket='fs', collection=None, **kwargs):
         """
@@ -42,7 +43,7 @@ class MongoContentStore(ContentStore):
         self.fs_files = _db[bucket + ".files"]  # the underlying collection GridFS uses
 
     def save(self, content):
-        content_id = self.asset_db_key(content.location)
+        content_id, content_son = self.asset_db_key(content.location)
 
         # The way to version files in gridFS is to not use the file id as the _id but just as the filename.
         # Then you can upload as many versions as you like and access by date or version. Because we use
@@ -51,7 +52,7 @@ class MongoContentStore(ContentStore):
 
         thumbnail_location = content.thumbnail_location.to_deprecated_list_repr() if content.thumbnail_location else None
         with self.fs.new_file(_id=content_id, filename=content.get_url_path(), content_type=content.content_type,
-                              displayname=content.name,
+                              displayname=content.name, content_son=content_son,
                               thumbnail_location=thumbnail_location,
                               import_path=content.import_path,
                               # getattr b/c caching may mean some pickled instances don't have attr
@@ -66,12 +67,20 @@ class MongoContentStore(ContentStore):
 
     def delete(self, location_or_id):
         if isinstance(location_or_id, AssetLocation):
-            location_or_id = self.asset_db_key(location_or_id)
+            location_or_id, __ = self.asset_db_key(location_or_id)
+        elif isinstance(location_or_id, dict) and not isinstance(location_or_id, SON):
+            dbkey = SON((field_name, location_or_id.get(field_name)) for field_name in self.ordered_key_fields)
+            if 'run' in location_or_id:
+                # NOTE, there's no need to state that run doesn't exist in the negative case b/c access via
+                # SON requires equivalence (same keys and values in exact same order)
+                dbkey['run'] = location_or_id['run']
+            location_or_id = dbkey
+
         # Deletes of non-existent files are considered successful
         self.fs.delete(location_or_id)
 
     def find(self, location, throw_on_not_found=True, as_stream=False):
-        content_id = self.asset_db_key(location)
+        content_id, __ = self.asset_db_key(location)
 
         try:
             if as_stream:
@@ -103,7 +112,7 @@ class MongoContentStore(ContentStore):
                 return None
 
     def get_stream(self, location):
-        content_id = self.asset_db_key(location)
+        content_id, __ = self.asset_db_key(location)
         try:
             handle = self.fs.get(content_id)
         except NoFile:
@@ -146,8 +155,9 @@ class MongoContentStore(ContentStore):
         assets, __ = self.get_all_content_for_course(course_key)
 
         for asset in assets:
+            asset_id = asset.get('content_son', asset['_id'])
             # assuming course_key's deprecated flag is controlling rather than presence or absence of 'run' in _id
-            asset_location = course_key.make_asset_key(asset['_id']['category'], asset['_id']['name'])
+            asset_location = course_key.make_asset_key(asset_id['category'], asset_id['name'])
             # TODO: On 6/19/14, I had to put a try/except around this
             # to export a course. The course failed on JSON files in
             # the /static/ directory placed in it with an import.
@@ -242,7 +252,7 @@ class MongoContentStore(ContentStore):
         for attr in attr_dict.iterkeys():
             if attr in ['_id', 'md5', 'uploadDate', 'length']:
                 raise AttributeError("{} is a protected attribute.".format(attr))
-        asset_db_key = self.asset_db_key(location)
+        asset_db_key, __ = self.asset_db_key(location)
         # catch upsert error and raise NotFoundError if asset doesn't exist
         result = self.fs_files.update({'_id': asset_db_key}, {"$set": attr_dict}, upsert=False)
         if not result.get('updatedExisting', True):
@@ -258,11 +268,44 @@ class MongoContentStore(ContentStore):
 
         :param location: a c4x asset location
         """
-        asset_db_key = self.asset_db_key(location)
+        asset_db_key, __ = self.asset_db_key(location)
         item = self.fs_files.find_one({'_id': asset_db_key})
         if item is None:
             raise NotFoundError(asset_db_key)
         return item
+
+    def copy_all_course_assets(self, source_course_key, dest_course_key):
+        """
+        See :meth:`.ContentStore.copy_all_course_assets`
+
+        This implementation fairly expensively copies all of the data
+        """
+        source_query = query_for_course(source_course_key)
+        # it'd be great to figure out how to do all of this on the db server and not pull the bits over
+        for asset in self.fs_files.find(source_query):
+            asset_key = self.make_id_son(asset)
+            source_content = self.fs.get(asset_key)
+            asset_key['org'] = dest_course_key.org
+            asset_key['course'] = dest_course_key.course
+            if getattr(dest_course_key, 'deprecated', False):  # remove the run if exists
+                if 'run' in asset_key:
+                    del asset_key['run']
+                asset_id = asset_key
+            else:  # add the run, since it's the last field, we're golden
+                asset_key['run'] = dest_course_key.run
+                asset_id = dest_course_key.make_asset_key(asset_key['category'], asset_key['name'])
+            source_content['content_son'] = asset_key
+            self.fs.put(
+                source_content._data,
+                _id=asset_id, filename=asset['filename'], content_type=asset['content_type'],
+                displayname=asset['name'], content_son=asset_key,
+                # thumbnail is not technically correct but will be functionally correct as the code
+                # only looks at the name which is not course relative.
+                thumbnail_location=asset['thumbnail_location'],
+                import_path=asset['import_path'],
+                # getattr b/c caching may mean some pickled instances don't have attr
+                locked=getattr(asset, 'locked', False)
+            )
 
     def delete_all_course_assets(self, course_key):
         """
@@ -273,22 +316,43 @@ class MongoContentStore(ContentStore):
         course_query = query_for_course(course_key)
         matching_assets = self.fs_files.find(course_query)
         for asset in matching_assets:
-            self.fs.delete(asset['_id'])
+            asset_key = self.make_id_son(asset)
+            self.fs.delete(asset_key)
 
-    @staticmethod
-    def asset_db_key(location):
+    # codifying the original order which pymongo used for the dicts coming out of location_to_dict
+    # stability of order is more important than sanity of order as any changes to order make things
+    # unfindable
+    ordered_key_fields = ['category', 'name', 'course', 'tag', 'org', 'revision']
+    @classmethod
+    def asset_db_key(cls, location):
         """
-        Returns the database query to find the given asset location.
+        Returns the database _id and son structured lookup to find the given asset location.
         """
-        # codifying the original order which pymongo used for the dicts coming out of location_to_dict
-        # stability of order is more important than sanity of order as any changes to order make things
-        # unfindable
-        ordered_key_fields = ['category', 'name', 'course', 'tag', 'org', 'revision']
-        dbkey = SON((field_name, getattr(location, field_name)) for field_name in ordered_key_fields)
-        if not getattr(location, 'deprecated', False):
+        dbkey = SON((field_name, getattr(location, field_name)) for field_name in cls.ordered_key_fields)
+        if getattr(location, 'deprecated', False):
+            content_id = dbkey
+        else:
             # NOTE, there's no need to state that run doesn't exist in the negative case b/c access via
             # SON requires equivalence (same keys and values in exact same order)
             dbkey['run'] = location.run
+            content_id = unicode(location)
+        return content_id, dbkey
+
+    def make_id_son(self, fs_entry):
+        """
+        Change the _id field in fs_entry into the properly ordered SON or string
+        Args:
+            fs_entry: the element returned by self.fs_files.find
+        """
+        _id_field = fs_entry['_id']
+        if isinstance(_id_field, basestring):
+            return _id_field
+        dbkey = SON((field_name, _id_field.get(field_name)) for field_name in self.ordered_key_fields)
+        if 'run' in _id_field:
+            # NOTE, there's no need to state that run doesn't exist in the negative case b/c access via
+            # SON requires equivalence (same keys and values in exact same order)
+            dbkey['run'] = _id_field['run']
+        fs_entry['_id'] = dbkey
         return dbkey
 
 
@@ -297,16 +361,19 @@ def query_for_course(course_key, category=None):
     Construct a SON object that will query for all assets possibly limited to the given type
     (thumbnail v assets) in the course using the index in mongo_indexes.md
     """
+    if getattr(course_key, 'deprecated', False):
+        prefix = '_id'
+    else:
+        prefix = 'content_son'
     dbkey = SON([
-        ('_id.tag', XASSET_LOCATION_TAG),
-        ('_id.org', course_key.org),
-        ('_id.course', course_key.course),
+        ('{}.tag'.format(prefix), XASSET_LOCATION_TAG),
+        ('{}.org'.format(prefix), course_key.org),
+        ('{}.course'.format(prefix), course_key.course),
     ])
     if category:
-        dbkey['_id.category'] = category
+        dbkey['{}.category'.format(prefix)] = category
     if getattr(course_key, 'deprecated', False):
-        dbkey['_id.run'] = {'$exists': False}
+        dbkey['{}.run'.format(prefix)] = {'$exists': False}
     else:
-        dbkey['_id.run'] = course_key.run
+        dbkey['{}.run'.format(prefix)] = course_key.run
     return dbkey
-

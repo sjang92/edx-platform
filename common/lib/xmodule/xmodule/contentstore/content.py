@@ -214,6 +214,12 @@ class ContentStore(object):
         """
         raise NotImplementedError
 
+    def copy_all_course_assets(self, source_course_key, dest_course_key):
+        """
+        Copy all the course assets from source_course_key to dest_course_key
+        """
+        raise NotImplementedError
+
     def generate_thumbnail(self, content, tempfile_path=None):
         thumbnail_content = None
         # use a naming convention to associate originals with the thumbnail
@@ -249,7 +255,7 @@ class ContentStore(object):
                 thumbnail_content = StaticContent(thumbnail_file_location, thumbnail_name,
                                                   'image/jpeg', thumbnail_file)
 
-                contentstore().save(thumbnail_content)
+                self.save(thumbnail_content)
 
             except Exception, e:
                 # log and continue as thumbnails are generally considered as optional

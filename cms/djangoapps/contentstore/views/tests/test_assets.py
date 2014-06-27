@@ -28,6 +28,10 @@ class AssetsTestCase(CourseTestCase):
     def setUp(self):
         super(AssetsTestCase, self).setUp()
         self.url = reverse_course_url('assets_handler', self.course.id)
+        # TODO remove after merge of opaque urls
+        if not hasattr(AssetLocation, 'deprecated'):
+            setattr(AssetLocation, 'deprecated', True)
+            setattr(SlashSeparatedCourseKey, 'deprecated', True)
 
     def upload_asset(self, name="asset-1"):
         f = BytesIO(name)
