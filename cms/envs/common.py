@@ -601,6 +601,7 @@ OPTIONAL_APPS = (
     'submissions',
     'openassessment',
     'openassessment.assessment',
+    'openassessment.fileupload',
     'openassessment.workflow',
     'openassessment.xblock'
 )
