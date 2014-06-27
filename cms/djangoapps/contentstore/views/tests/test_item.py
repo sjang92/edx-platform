@@ -8,9 +8,11 @@ from mock import patch
 from pytz import UTC
 from webob import Response
 
+from django.conf import settings
 from django.http import Http404
 from django.test import TestCase
 from django.test.client import RequestFactory
+from django.test.utils import override_settings
 from django.core.urlresolvers import reverse
 from contentstore.utils import reverse_usage_url, reverse_course_url
 
@@ -30,6 +32,8 @@ from opaque_keys.edx.keys import UsageKey
 from opaque_keys.edx.locations import Location
 from xmodule.partitions.partitions import Group, UserPartition
 
+FEATURES_WITH_GROUP_CONFIGURATIONS = settings.FEATURES.copy()
+FEATURES_WITH_GROUP_CONFIGURATIONS['ENABLE_GROUP_CONFIGURATIONS'] = True
 
 class ItemTest(CourseTestCase):
     """ Base test class for create, save, and delete """
@@ -773,6 +777,7 @@ class TestEditItem(ItemTest):
         self.verify_publish_state(html_usage_key, PublishState.draft)
 
 
+@override_settings(FEATURES=FEATURES_WITH_GROUP_CONFIGURATIONS)
 class TestEditSplitModule(ItemTest):
     """
     Tests around editing instances of the split_test module.

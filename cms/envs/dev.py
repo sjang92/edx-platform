@@ -160,6 +160,9 @@ DEBUG_TOOLBAR_MONGO_STACKTRACES = False
 # Enable URL that shows information about the status of variuous services
 FEATURES['ENABLE_SERVICE_STATUS'] = True
 
+# Enable Group Configuration editing functionality
+FEATURES['ENABLE_GROUP_CONFIGURATIONS'] = True
+
 ############################# SEGMENT-IO ##################################
 
 # If there's an environment variable set, grab it and turn on Segment.io

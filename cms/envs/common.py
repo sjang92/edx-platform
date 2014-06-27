@@ -101,6 +101,9 @@ FEATURES = {
 
     # Turn off Advanced Security by default
     'ADVANCED_SECURITY': False,
+
+    # Toggles Group Configuration editing functionality
+    'ENABLE_GROUP_CONFIGURATIONS': False,
 }
 ENABLE_JASMINE = False
 

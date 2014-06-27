@@ -7,6 +7,7 @@ from unittest import skip
 
 from ..fixtures.course import CourseFixture, XBlockFixtureDesc
 
+from contentstore.tests.test_item import FEATURES_WITH_GROUP_CONFIGURATIONS
 from ..pages.studio.component_editor import ComponentEditorView
 from ..pages.studio.settings_advanced import AdvancedSettingsPage
 from ..pages.studio.settings_group_configurations import GroupConfigurationsPage
@@ -162,6 +163,7 @@ class SplitTest(ContainerBase):
         self.verify_groups(container, ['alpha'], [], verify_missing_groups_not_present=False)
 
 
+@override_settings(FEATURES=FEATURES_WITH_GROUP_CONFIGURATIONS)
 class SettingsMenuTest(UniqueCourseTest):
     """
     Tests that Setting menu is rendered correctly in Studio
@@ -222,6 +224,7 @@ class SettingsMenuTest(UniqueCourseTest):
         self.assertFalse(self.advanced_settings.q(css=link_css).present)
 
 
+@override_settings(FEATURES=FEATURES_WITH_GROUP_CONFIGURATIONS)
 class GroupConfigurationsTest(UniqueCourseTest):
     """
     Tests that Group Configurations page works correctly with previously
