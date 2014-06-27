@@ -162,7 +162,7 @@ def _xblock_json(xblock, course_id):
     if child_category:
         result['child_info'] = {
             'category': child_category,
-            'display_name': xblock_type_display_name(child_category),
+            'display_name': xblock_type_display_name(child_category, default_display_name=child_category),
         }
     if is_container:
         result['children'] = [_xblock_json(child, course_id) for child in xblock.get_children()]

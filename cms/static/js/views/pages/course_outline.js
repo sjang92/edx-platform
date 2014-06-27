@@ -15,7 +15,7 @@ define(["jquery", "underscore", "gettext", "js/views/pages/base_page", "js/views
             renderPage: function() {
                 if (this.hasContent()) {
                     this.outlineView = new CourseOutlineView({
-                        el: this.$('.courseware-overview'),
+                        el: this.$('.course-outline'),
                         model: this.model
                     });
                     this.outlineView.render();

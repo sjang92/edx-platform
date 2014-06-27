@@ -1,5 +1,5 @@
-define(["jquery", "underscore", "js/views/baseview"],
-    function($, _, BaseView) {
+define(["jquery", "underscore", "gettext", "js/views/baseview"],
+    function($, _, gettext, BaseView) {
 
         var XBlockOutlineView = BaseView.extend({
             // takes XBlockInfo as a model
@@ -15,9 +15,7 @@ define(["jquery", "underscore", "js/views/baseview"],
 
             render: function() {
                 var i, children, listElement, childOutlineView;
-                if (this.parentInfo) {
-                    this.renderTemplate();
-                }
+                this.renderTemplate();
                 if (this.shouldRenderChildren()) {
                     listElement = this.$('.sortable-list');
                     children = this.model.get('children');
@@ -45,8 +43,15 @@ define(["jquery", "underscore", "js/views/baseview"],
             renderTemplate: function() {
                 var xblockInfo = this.model,
                     childInfo = xblockInfo.get('child_info'),
+                    parentInfo = this.parentInfo,
                     xblockType = this.getXBlockType(this.model.get('category'), this.parentInfo),
-                    parentType = this.getXBlockType(this.parentInfo.get('category'));
+                    parentType = parentInfo ? this.getXBlockType(parentInfo.get('category')) : null,
+                    addChildName = null;
+                if (childInfo) {
+                    addChildName = interpolate(gettext('Add %(component_type)s'), {
+                        component_type: childInfo.display_name
+                    }, true);
+                }
                 this.$el.html(this.template({
                     xblockInfo: xblockInfo,
                     parentInfo: this.parentInfo,
@@ -54,7 +59,7 @@ define(["jquery", "underscore", "js/views/baseview"],
                     parentType: parentType,
                     childType: childInfo ? this.getXBlockType(childInfo.category, xblockInfo) : null,
                     childCategory: childInfo ? childInfo.category : null,
-                    addChildName: childInfo ? childInfo.display_name : null,
+                    addChildName: addChildName,
                     includesChildren: this.shouldRenderChildren()
                 }));
             },

@@ -8,7 +8,7 @@ from django.utils.translation import ugettext as _
 from contentstore.utils import reverse_usage_url
 %>
 <%block name="title">${_("Course Outline")}</%block>
-<%block name="bodyclass">is-signedin course view-outline</%block>
+<%block name="bodyclass">is-signedin course view-course-outline</%block>
 
 <%namespace name='static' file='static_content.html'/>
 <%namespace name="units" file="widgets/units.html" />
@@ -74,8 +74,7 @@ from contentstore.utils import reverse_usage_url
                 <%
                 course_locator = context_course.location
                 %>
-                <article class="courseware-overview" data-locator="${course_locator}" data-course-key="${course_locator.course_key}">
-                    <ul class="sortable-list"></ul>
+                <article class="course-outline" data-locator="${course_locator}" data-course-key="${course_locator.course_key}">
                 </article>
             </div>
             <div class="no-content is-hidden">
