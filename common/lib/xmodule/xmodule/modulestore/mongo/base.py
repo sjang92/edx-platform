@@ -40,7 +40,8 @@ from xmodule.modulestore.inheritance import own_metadata, InheritanceMixin, inhe
 from xblock.core import XBlock
 from opaque_keys.edx.locations import SlashSeparatedCourseKey
 from xmodule.exceptions import HeartbeatFailure
-from .draft import DIRECT_ONLY_CATEGORIES
+
+DIRECT_ONLY_CATEGORIES = ['course', 'chapter', 'sequential', 'about', 'static_tab', 'course_info']
 
 log = logging.getLogger(__name__)
 
