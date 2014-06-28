@@ -4,8 +4,17 @@ define(["jquery", "underscore", "js/views/xblock_outline"],
         var CourseOutlineView = XBlockOutlineView.extend({
             // takes XBlockInfo as a model
 
+            events : {
+                "click .add-button": "addXBlock"
+            },
+
             initialize: function() {
                 XBlockOutlineView.prototype.initialize.call(this);
+                this.model.on('change', this.onXBlockChange, this);
+            },
+
+            onXBlockChange: function() {
+                this.render();
             },
 
             shouldRenderChildren: function() {
@@ -19,6 +28,35 @@ define(["jquery", "underscore", "js/views/xblock_outline"],
                     parentInfo: parentInfo,
                     template: this.template
                 });
+            },
+
+            addXBlock: function(event) {
+                var self = this,
+                    target = $(event.target),
+                    parentLocator = target.data('parent'),
+                    category = target.data('category'),
+                    displayName = target.data('default-name');
+                if (this.model.id === parentLocator) {
+                    event.preventDefault();
+                    event.stopPropagation();
+
+                    analytics.track('Created a ' + category, {
+                        'course': course_location_analytics,
+                        'display_name': displayName
+                    });
+
+                    $.postJSON(this.model.urlRoot + '/',
+                        {
+                            'parent_locator': parentLocator,
+                            'category': category,
+                            'display_name': displayName
+                        },
+                        function(data) {
+                            var locator = data.locator;
+                            window.alert("New locator: " + locator);
+                            self.model.fetch();
+                        });
+                }
             }
         });
 

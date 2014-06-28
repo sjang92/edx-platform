@@ -1,8 +1,12 @@
-define(["jquery", "underscore", "gettext", "js/views/baseview"],
-    function($, _, gettext, BaseView) {
+define(["jquery", "underscore", "gettext", "js/views/baseview", "js/views/utils/xblock_utils"],
+    function($, _, gettext, BaseView, xblock_utils) {
 
         var XBlockOutlineView = BaseView.extend({
             // takes XBlockInfo as a model
+
+            events : {
+                "click .delete-button": "deleteXBlock"
+            },
 
             initialize: function() {
                 BaseView.prototype.initialize.call(this);
@@ -46,9 +50,13 @@ define(["jquery", "underscore", "gettext", "js/views/baseview"],
                     parentInfo = this.parentInfo,
                     xblockType = this.getXBlockType(this.model.get('category'), this.parentInfo),
                     parentType = parentInfo ? this.getXBlockType(parentInfo.get('category')) : null,
-                    addChildName = null;
+                    addChildName = null,
+                    defaultNewChildName = null;
                 if (childInfo) {
                     addChildName = interpolate(gettext('Add %(component_type)s'), {
+                        component_type: childInfo.display_name
+                    }, true);
+                    defaultNewChildName = interpolate(gettext('New %(component_type)s'), {
                         component_type: childInfo.display_name
                     }, true);
                 }
@@ -59,7 +67,8 @@ define(["jquery", "underscore", "gettext", "js/views/baseview"],
                     parentType: parentType,
                     childType: childInfo ? this.getXBlockType(childInfo.category, xblockInfo) : null,
                     childCategory: childInfo ? childInfo.category : null,
-                    addChildName: addChildName,
+                    addChildLabel: addChildName,
+                    defaultNewChildName: defaultNewChildName,
                     includesChildren: this.shouldRenderChildren()
                 }));
             },
@@ -74,6 +83,13 @@ define(["jquery", "underscore", "gettext", "js/views/baseview"],
                     xblockType = 'unit';
                 }
                 return xblockType;
+            },
+
+            deleteXBlock: function(event) {
+                event.preventDefault();
+                xblock_utils.deleteXBlock(this.model).done(function() {
+                    window.alert("Deleted xblock!");
+                });
             }
         });
 

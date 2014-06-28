@@ -63,8 +63,9 @@
     <% if (childType) { %>
         <div class="add-xblock-component">
             <span class="draggable-drop-indicator draggable-drop-indicator-initial"><i class="icon-caret-right"></i></span>
-            <a href="#" class="add-button" data-category="<%= childCategory %>" data-parent="<%= xblockType.id %>">
-                <i class="icon-plus"></i><%= addChildName %>
+            <a href="#" class="add-button" data-category="<%= childCategory %>"
+               data-parent="<%= xblockInfo.get('id') %>" data-default-name="<%= defaultNewChildName %>">
+                <i class="icon-plus"></i><%= addChildLabel %>
             </a>
         </div>
     <% } %>
