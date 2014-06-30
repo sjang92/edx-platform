@@ -60,7 +60,7 @@ def path_to_location(modulestore, usage_key):
             parents = modulestore.get_parent_locations(next_usage)
 
             # print 'Processing loc={0}, path={1}'.format(next_usage, path)
-            if next_usage.definition_key.block_type == "course":
+            if next_usage.block_type == "course":
                 # Found it!
                 path = (next_usage, path)
                 return flatten(path)
@@ -96,7 +96,7 @@ def path_to_location(modulestore, usage_key):
     if n > 3:
         position_list = []
         for path_index in range(2, n - 1):
-            category = path[path_index].definition_key.block_type
+            category = path[path_index].block_type
             if category == 'sequential' or category == 'videosequence':
                 section_desc = modulestore.get_item(path[path_index])
                 child_locs = [c.location for c in section_desc.get_children()]
