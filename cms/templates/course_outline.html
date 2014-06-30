@@ -56,7 +56,9 @@ from contentstore.utils import reverse_usage_url
                     <a href="#" class="toggle-button toggle-button-sections"><i class="icon-arrow-up"></i> <span class="label">${_("Collapse All Sections")}</span></a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="button new-button new-courseware-section-button"><i class="icon-plus"></i> ${_("New Section")}</a>
+                    <a href="#" class="button view-button add-button" data-category="chapter" data-parent="${context_course.location}" data-default-name="${_('Add Section')}">
+                        <i class="icon-plus"></i>${_('Add Section')}
+                    </a>
                 </li>
                 <li class="nav-item">
                     <a href="${lms_link}" rel="external" class="button view-button view-live-button">${_("View Live")}</a>
@@ -69,7 +71,6 @@ from contentstore.utils import reverse_usage_url
 <div class="wrapper-content wrapper">
     <section class="content">
         <article class="content-primary" role="main">
-
             <div class="wrapper-dnd">
                 <%
                 course_locator = context_course.location
@@ -77,13 +78,9 @@ from contentstore.utils import reverse_usage_url
                 <article class="course-outline" data-locator="${course_locator}" data-course-key="${course_locator.course_key}">
                 </article>
             </div>
-            <div class="no-content is-hidden">
-                <p>${_("You haven't added any content to this course yet.")} <a href="#" class="button new-button new-courseware-section-button"><i class="icon-plus"></i> ${_("New Section")}</a></p>
-            </div>
             <div class="ui-loading">
                 <p><span class="spin"><i class="icon-refresh"></i></span> <span class="copy">${_("Loading...")}</span></p>
             </div>
-
         </article>
         <aside class="content-supplementary" role="complimentary">
             <div class="bit">

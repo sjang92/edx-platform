@@ -57,18 +57,28 @@
     </div>
 <% } %>
 
-    <ol class="sortable-list sortable-<%= xblockType %>-list">
-    </ol>
-
-    <% if (childType) { %>
-        <div class="add-xblock-component">
-            <span class="draggable-drop-indicator draggable-drop-indicator-initial"><i class="icon-caret-right"></i></span>
-            <a href="#" class="add-button" data-category="<%= childCategory %>"
-               data-parent="<%= xblockInfo.get('id') %>" data-default-name="<%= defaultNewChildName %>">
-                <i class="icon-plus"></i><%= addChildLabel %>
-            </a>
+    <% if (!parentInfo && xblockInfo.get('children').length == 0) { %>
+        <div class="no-content add-xblock-component">
+            <p><%= gettext("You haven't added any content to this course yet.") %>
+                <a href="#" class="add-button" data-category="<%= childCategory %>"
+                   data-parent="<%= xblockInfo.get('id') %>" data-default-name="<%= defaultNewChildName %>">
+                    <i class="icon-plus"></i><%= addChildLabel %>
+                </a>
         </div>
+    <% } else { %>
+        <ol class="sortable-list sortable-<%= xblockType %>-list">
+        </ol>
+
+        <% if (childType) { %>
+            <div class="add-xblock-component">
+                <a href="#" class="add-button" data-category="<%= childCategory %>"
+                   data-parent="<%= xblockInfo.get('id') %>" data-default-name="<%= defaultNewChildName %>">
+                    <i class="icon-plus"></i><%= addChildLabel %>
+                </a>
+            </div>
+        <% } %>
     <% } %>
+
 <% if (parentInfo) { %>
     <span class="draggable-drop-indicator draggable-drop-indicator-after"><i class="icon-caret-right"></i></span>
 </li>

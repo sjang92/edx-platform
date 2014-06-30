@@ -1,12 +1,8 @@
-define(["jquery", "underscore", "js/views/xblock_outline"],
-    function($, _, XBlockOutlineView) {
+define(["jquery", "underscore", "gettext", "js/views/xblock_outline", "js/views/utils/xblock_utils"],
+    function($, _, gettext, XBlockOutlineView, XBlockViewUtils) {
 
         var CourseOutlineView = XBlockOutlineView.extend({
             // takes XBlockInfo as a model
-
-            events : {
-                "click .add-button": "addXBlock"
-            },
 
             initialize: function() {
                 XBlockOutlineView.prototype.initialize.call(this);
@@ -14,7 +10,11 @@ define(["jquery", "underscore", "js/views/xblock_outline"],
             },
 
             onXBlockChange: function() {
+                var oldElement = this.$el;
                 this.render();
+                if (this.parentInfo) {
+                    oldElement.replaceWith(this.$el);
+                }
             },
 
             shouldRenderChildren: function() {
@@ -30,33 +30,16 @@ define(["jquery", "underscore", "js/views/xblock_outline"],
                 });
             },
 
-            addXBlock: function(event) {
-                var self = this,
-                    target = $(event.target),
-                    parentLocator = target.data('parent'),
-                    category = target.data('category'),
-                    displayName = target.data('default-name');
-                if (this.model.id === parentLocator) {
+            addButtonActions: function(element) {
+                var self = this;
+                XBlockOutlineView.prototype.addButtonActions.call(this, element);
+                element.find('.add-button').click(function(event) {
                     event.preventDefault();
-                    event.stopPropagation();
-
-                    analytics.track('Created a ' + category, {
-                        'course': course_location_analytics,
-                        'display_name': displayName
+                    XBlockViewUtils.addXBlock($(event.target)).done(function(locator) {
+                        // TODO: add just the new element (although how will the publish status get propagated?)
+                        self.model.fetch();
                     });
-
-                    $.postJSON(this.model.urlRoot + '/',
-                        {
-                            'parent_locator': parentLocator,
-                            'category': category,
-                            'display_name': displayName
-                        },
-                        function(data) {
-                            var locator = data.locator;
-                            window.alert("New locator: " + locator);
-                            self.model.fetch();
-                        });
-                }
+                });
             }
         });
 

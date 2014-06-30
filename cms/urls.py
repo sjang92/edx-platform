@@ -81,6 +81,7 @@ urlpatterns += patterns(
     url(r'^import/(?P<course_key_string>[^/]+)$', 'import_handler'),
     url(r'^import_status/(?P<course_key_string>[^/]+)/(?P<filename>.+)$', 'import_status_handler'),
     url(r'^export/(?P<course_key_string>[^/]+)$', 'export_handler'),
+    url(r'^xblock/outline/(?P<usage_key_string>[^/]+)?$', 'xblock_outline_handler'),
     url(r'^xblock/(?P<usage_key_string>[^/]+)/(?P<view_name>[^/]+)$', 'xblock_view_handler'),
     url(r'^xblock/(?P<usage_key_string>[^/]+)?$', 'xblock_handler'),
     url(r'^tabs/(?P<course_key_string>[^/]+)$', 'tabs_handler'),

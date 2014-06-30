@@ -1,7 +1,7 @@
 define(["backbone", "js/utils/module"], function(Backbone, ModuleUtils) {
     var XBlockInfo = Backbone.Model.extend({
 
-        urlRoot: ModuleUtils.urlRoot,
+        urlRoot: '/xblock/outline',
 
         defaults: {
             "id": null,

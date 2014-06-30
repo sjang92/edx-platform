@@ -84,6 +84,16 @@ define(["jquery", "gettext", "js/views/feedback_notification", "js/views/feedbac
         };
 
         /**
+         * Performs an animated scroll so that the window has the specified scroll top.
+         * @param scrollTop The desired scroll top for the window.
+         */
+        setScrollTop = function(scrollTop) {
+            $('html, body').animate({
+                scrollTop: scrollTop
+            }, 500);
+        };
+
+        /**
          * Returns the relative position that the element is scrolled from the top of the view port.
          * @param element The element in question.
          */
@@ -101,17 +111,7 @@ define(["jquery", "gettext", "js/views/feedback_notification", "js/views/feedbac
         setScrollOffset = function(element, offset) {
             var elementTop = element.offset().top,
                 newScrollTop = elementTop - offset;
-            this.setScrollTop(newScrollTop);
-        };
-
-        /**
-         * Performs an animated scroll so that the window has the specified scroll top.
-         * @param scrollTop The desired scroll top for the window.
-         */
-        setScrollTop = function(scrollTop) {
-            $('html, body').animate({
-                scrollTop: scrollTop
-            }, 500);
+            setScrollTop(newScrollTop);
         };
 
         return {
@@ -121,8 +121,8 @@ define(["jquery", "gettext", "js/views/feedback_notification", "js/views/feedbac
             'confirmThenRunOperation': confirmThenRunOperation,
             'runOperationShowingMessage': runOperationShowingMessage,
             'disableElementWhileRunning': disableElementWhileRunning,
+            'setScrollTop': setScrollTop,
             'getScrollOffset': getScrollOffset,
-            'setScrollOffset': setScrollOffset,
-            'setScrollTop': setScrollTop
+            'setScrollOffset': setScrollOffset
         };
     });

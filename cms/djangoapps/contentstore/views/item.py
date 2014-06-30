@@ -30,14 +30,15 @@ from xmodule.modulestore import REVISION_OPTION_ALL
 from util.json_request import expect_json, JsonResponse
 
 from .access import has_course_access
-from contentstore.views.helpers import is_unit
+from contentstore.views.helpers import is_unit, xblock_studio_url, xblock_primary_child_category, \
+    xblock_type_display_name
 from contentstore.views.preview import get_preview_fragment
 from edxmako.shortcuts import render_to_string
 from models.settings.course_grading import CourseGradingModel
 from cms.lib.xblock.runtime import handler_url, local_resource_url
 from opaque_keys.edx.keys import UsageKey, CourseKey
 
-__all__ = ['orphan_handler', 'xblock_handler', 'xblock_view_handler']
+__all__ = ['orphan_handler', 'xblock_handler', 'xblock_view_handler', 'xblock_outline_handler']
 
 log = logging.getLogger(__name__)
 
@@ -236,6 +237,32 @@ def xblock_view_handler(request, usage_key_string, view_name):
             'resources': hashed_resources.items()
         })
 
+    else:
+        return HttpResponse(status=406)
+
+
+# pylint: disable=unused-argument
+@require_http_methods(("GET"))
+@login_required
+@expect_json
+def xblock_outline_handler(request, usage_key_string):
+    """
+    The restful handler for requests for rendered xblock views.
+
+    Returns a json object containing two keys:
+        html: The rendered html of the view
+        resources: A list of tuples where the first element is the resource hash, and
+            the second is the resource description
+    """
+    usage_key = UsageKey.from_string(usage_key_string)
+    if not has_course_access(request.user, usage_key.course_key):
+        raise PermissionDenied()
+
+    response_format = request.REQUEST.get('format', 'html')
+    if response_format == 'json' or 'application/json' in request.META.get('HTTP_ACCEPT', 'application/json'):
+        store = modulestore()
+        xblock = store.get_item(usage_key)
+        return JsonResponse(xblock_outline_json(xblock))
     else:
         return HttpResponse(status=406)
 
@@ -555,3 +582,28 @@ def _get_module_info(usage_key, user, rewrite_static_links=True):
         'data': data,
         'metadata': own_metadata(module)
     }
+
+
+def xblock_outline_json(xblock):
+    """
+    Returns a JSON representation of an xblock and recursively all of its children.
+    """
+    is_container = xblock.has_children
+    child_category = xblock_primary_child_category(xblock)
+    result = {
+        'display_name': xblock.display_name,
+        'id': unicode(xblock.location),
+        'category': xblock.category,
+        'is_draft': getattr(xblock, 'is_draft', False),
+        'is_container': is_container,
+        'studio_url': xblock_studio_url(xblock),
+        'release_date': u'Jan 01, 2030 at 00:00 UTC' if xblock.category == 'chapter' else None,
+    }
+    if child_category:
+        result['child_info'] = {
+            'category': child_category,
+            'display_name': xblock_type_display_name(child_category, default_display_name=child_category),
+        }
+    if is_container:
+        result['children'] = [xblock_outline_json(child) for child in xblock.get_children()]
+    return result

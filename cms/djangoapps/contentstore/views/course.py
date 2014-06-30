@@ -46,6 +46,7 @@ from .component import (
     NOTE_COMPONENT_TYPES,
     ADVANCED_COMPONENT_POLICY_KEY
 )
+from .item import xblock_outline_json
 
 from django_comment_common.models import assign_default_role
 from django_comment_common.utils import seed_permissions_roles
@@ -56,7 +57,6 @@ from student.roles import CourseRole, UserBasedRole
 from opaque_keys.edx.keys import CourseKey
 from course_creators.views import get_course_creator_status, add_user_with_status_unrequested
 from contentstore import utils
-from contentstore.views.helpers import xblock_studio_url, xblock_primary_child_category, xblock_type_display_name
 from student.roles import CourseInstructorRole, CourseStaffRole, CourseCreatorRole, GlobalStaff
 from student import auth
 
@@ -115,7 +115,7 @@ def course_handler(request, course_key_string=None):
     response_format = request.REQUEST.get('format', 'html')
     if response_format == 'json' or 'application/json' in request.META.get('HTTP_ACCEPT', 'application/json'):
         if request.method == 'GET':
-            return JsonResponse(_course_json(request, CourseKey.from_string(course_key_string)))
+            return JsonResponse(course_outline_json(request, CourseKey.from_string(course_key_string)))
         elif request.method == 'POST':  # not sure if this is only post. If one will have ids, it goes after access
             return create_new_course(request)
         elif not has_course_access(request.user, CourseKey.from_string(course_key_string)):
@@ -136,37 +136,12 @@ def course_handler(request, course_key_string=None):
 
 
 @login_required
-def _course_json(request, course_key):
+def course_outline_json(request, course_key):
     """
-    Returns a JSON overview of a course
+    Returns a JSON representation of the course module and recursively all of its children.
     """
     course_module = _get_course_module(course_key, request.user, depth=None)
-    return _xblock_json(course_module, course_module.id)
-
-
-def _xblock_json(xblock, course_id):
-    """
-    Returns a JSON overview of an XModule
-    """
-    is_container = xblock.has_children
-    child_category = xblock_primary_child_category(xblock)
-    result = {
-        'display_name': xblock.display_name,
-        'id': unicode(xblock.location),
-        'category': xblock.category,
-        'is_draft': getattr(xblock, 'is_draft', False),
-        'is_container': is_container,
-        'studio_url': xblock_studio_url(xblock),
-        'release_date': u'Jan 01, 2030 at 00:00 UTC' if xblock.category == 'chapter' else None,
-    }
-    if child_category:
-        result['child_info'] = {
-            'category': child_category,
-            'display_name': xblock_type_display_name(child_category, default_display_name=child_category),
-        }
-    if is_container:
-        result['children'] = [_xblock_json(child, course_id) for child in xblock.get_children()]
-    return result
+    return xblock_outline_json(course_module)
 
 
 def _accessible_courses_list(request):
@@ -275,7 +250,7 @@ def course_index(request, course_key):
     course_module = _get_course_module(course_key, request.user, depth=3)
     lms_link = get_lms_link_for_item(course_module.location)
     sections = course_module.get_children()
-    course_structure = _course_json(request, course_key)
+    course_structure = course_outline_json(request, course_key)
 
     return render_to_response('course_outline.html', {
         'context_course': course_module,

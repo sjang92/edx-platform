@@ -1,12 +1,8 @@
 define(["jquery", "underscore", "gettext", "js/views/baseview", "js/views/utils/xblock_utils"],
-    function($, _, gettext, BaseView, xblock_utils) {
+    function($, _, gettext, BaseView, XBlockViewUtils) {
 
         var XBlockOutlineView = BaseView.extend({
             // takes XBlockInfo as a model
-
-            events : {
-                "click .delete-button": "deleteXBlock"
-            },
 
             initialize: function() {
                 BaseView.prototype.initialize.call(this);
@@ -20,16 +16,29 @@ define(["jquery", "underscore", "gettext", "js/views/baseview", "js/views/utils/
             render: function() {
                 var i, children, listElement, childOutlineView;
                 this.renderTemplate();
+                this.addButtonActions(this.$el);
                 if (this.shouldRenderChildren()) {
                     listElement = this.$('.sortable-list');
                     children = this.model.get('children');
                     for (i=0; i < children.length; i++) {
                         childOutlineView = this.createChildView(children[i], this.model);
                         childOutlineView.render();
-                        listElement.append(childOutlineView.$('li').first());
+                        listElement.append(childOutlineView.$el);
                     }
                 }
                 return this;
+            },
+
+            addButtonActions: function(element) {
+                var self = this;
+                element.find('.configure-button').click(function(event) {
+                    event.preventDefault();
+                    self.editXBlock($(event.target));
+                });
+                element.find('.delete-button').click(function(event) {
+                    event.preventDefault();
+                    self.deleteXBlock($(event.target));
+                });
             },
 
             shouldRenderChildren: function() {
@@ -51,7 +60,8 @@ define(["jquery", "underscore", "gettext", "js/views/baseview", "js/views/utils/
                     xblockType = this.getXBlockType(this.model.get('category'), this.parentInfo),
                     parentType = parentInfo ? this.getXBlockType(parentInfo.get('category')) : null,
                     addChildName = null,
-                    defaultNewChildName = null;
+                    defaultNewChildName = null,
+                    html;
                 if (childInfo) {
                     addChildName = interpolate(gettext('Add %(component_type)s'), {
                         component_type: childInfo.display_name
@@ -60,7 +70,7 @@ define(["jquery", "underscore", "gettext", "js/views/baseview", "js/views/utils/
                         component_type: childInfo.display_name
                     }, true);
                 }
-                this.$el.html(this.template({
+                html = this.template({
                     xblockInfo: xblockInfo,
                     parentInfo: this.parentInfo,
                     xblockType: xblockType,
@@ -70,7 +80,12 @@ define(["jquery", "underscore", "gettext", "js/views/baseview", "js/views/utils/
                     addChildLabel: addChildName,
                     defaultNewChildName: defaultNewChildName,
                     includesChildren: this.shouldRenderChildren()
-                }));
+                });
+                if (this.parentInfo) {
+                    this.setElement($(html));
+                } else {
+                    this.$el.html(html);
+                }
             },
 
             getXBlockType: function(category, parentInfo) {
@@ -85,10 +100,10 @@ define(["jquery", "underscore", "gettext", "js/views/baseview", "js/views/utils/
                 return xblockType;
             },
 
-            deleteXBlock: function(event) {
-                event.preventDefault();
-                xblock_utils.deleteXBlock(this.model).done(function() {
-                    window.alert("Deleted xblock!");
+            deleteXBlock: function(target) {
+                XBlockViewUtils.deleteXBlock(this.model).done(function() {
+                    var item = target.closest('.outline-item');
+                    item.remove();
                 });
             }
         });
