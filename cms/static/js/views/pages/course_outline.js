@@ -7,7 +7,9 @@ define(["jquery", "underscore", "gettext", "js/views/pages/base_page", "js/views
         var CourseOutlinePage = BasePage.extend({
             // takes XBlockInfo as a model
 
-            view: 'container_preview',
+            events: {
+                "click .toggle-button-expand-collapse": "toggleExpandCollapse"
+            },
 
             initialize: function() {
                 var self = this;
@@ -32,6 +34,24 @@ define(["jquery", "underscore", "gettext", "js/views/pages/base_page", "js/views
 
             hasContent: function() {
                 return this.model.get('children').length > 0;
+            },
+
+            toggleExpandCollapse: function(event) {
+                var toggleButton = this.$('.toggle-button-expand-collapse'),
+                    collapse = toggleButton.hasClass('collapse-all');
+                event.preventDefault();
+                toggleButton.toggleClass('collapse-all').toggleClass('expand-all');
+                this.$('.course-outline  > ol > li').each(function(index, domElement) {
+                    var element = $(domElement),
+                        expandCollapseElement = element.find('.expand-collapse').first();
+                    if (collapse) {
+                        expandCollapseElement.removeClass('expand').addClass('collapse');
+                        element.addClass('collapsed');
+                    } else {
+                        expandCollapseElement.addClass('expand').removeClass('collapse');
+                        element.removeClass('collapsed');
+                    }
+                });
             }
         });
 

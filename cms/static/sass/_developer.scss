@@ -33,6 +33,19 @@
     left: 0;
   }
 
+  .nav-actions {
+    .collapse-all {
+      .expand-all {
+        display: none;
+      }
+    }
+
+    .expand-all {
+      .collapse-all {
+        display: none;
+      }
+    }
+  }
 
   .outline-item {
     padding: 6px 8px 8px 16px;
