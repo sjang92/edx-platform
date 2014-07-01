@@ -602,7 +602,37 @@ class TestMongoModuleStore(unittest.TestCase):
         dummy_user = 123
         locations = self._create_test_tree('has_changes_publish_ancestors')
 
-        self.fail("needs to be implemented")
+        # Verify that there are no unpublished changes
+        for key in locations:
+            self.assertFalse(self.draft_store.has_changes(locations[key]))
+
+        # Change both children
+        child = self.draft_store.get_item(locations['child'])
+        child_sibling = self.draft_store.get_item(locations['child_sibling'])
+        child.display_name = 'Changed Display Name'
+        child_sibling.display_name = 'Changed Display Name'
+        self.draft_store.update_item(child, user_id=dummy_user)
+        self.draft_store.update_item(child_sibling, user_id=dummy_user)
+
+        import nose.tools; nose.tools.set_trace()
+
+        # Verify that ancestors have changes
+        self.assertTrue(self.draft_store.has_changes(locations['grandparent']))
+        self.assertTrue(self.draft_store.has_changes(locations['parent']))
+
+        # Publish one child
+        self.draft_store.publish(locations['child_sibling'], dummy_user)
+
+        # Verify that ancestors still have changes
+        self.assertTrue(self.draft_store.has_changes(locations['grandparent']))
+        self.assertTrue(self.draft_store.has_changes(locations['parent']))
+
+        # Publish the other child
+        self.draft_store.publish(locations['child'], dummy_user)
+
+        # Verify that ancestors now have no changes
+        self.assertFalse(self.draft_store.has_changes(locations['grandparent']))
+        self.assertFalse(self.draft_store.has_changes(locations['parent']))
 
     def test_update_edit_info(self):
         """
