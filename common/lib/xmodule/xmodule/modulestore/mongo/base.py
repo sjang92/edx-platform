@@ -41,8 +41,6 @@ from xblock.core import XBlock
 from opaque_keys.edx.locations import SlashSeparatedCourseKey
 from xmodule.exceptions import HeartbeatFailure
 
-DIRECT_ONLY_CATEGORIES = ['course', 'chapter', 'sequential', 'about', 'static_tab', 'course_info']
-
 log = logging.getLogger(__name__)
 
 
@@ -955,7 +953,7 @@ class MongoModuleStore(ModuleStoreWriteBase):
         """
         Recursively applies update to all the ancestors of location as long as filter returns True.
         """
-        parent = self.get_parent_location(as_published(location), revision=REVISION_OPTION_DRAFT_PREFERRED)
+        parent = self.get_parent_location(as_published(location))
 
         if not parent:
             return
