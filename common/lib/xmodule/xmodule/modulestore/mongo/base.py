@@ -1017,7 +1017,10 @@ class MongoModuleStore(ModuleStoreWriteBase):
                         except ItemNotFoundError:
                             pass
                 payload['edit_info.has_changes'] = child_changes
-                ancestor_payload['edit_info.has_changes'] = child_changes
+                if child_changes:
+                    ancestor_payload['edit_info.has_changes'] = True
+                else:
+                    filtered_payload = { 'edit_info.has_changes': False }
 
             if xblock.has_children:
                 children = self._convert_reference_fields_to_strings(xblock, {'children': xblock.children})

@@ -632,6 +632,37 @@ class TestMongoModuleStore(unittest.TestCase):
         self.assertFalse(self.draft_store.has_changes(locations['grandparent']))
         self.assertFalse(self.draft_store.has_changes(locations['parent']))
 
+    def test_has_changes_add_remove_child(self):
+        """
+        Tests that has_changes() returns true for the parent when a child with changes is added
+        and false when that child is removed.
+        """
+        dummy_user = 123
+        locations = self._create_test_tree('has_changes_add_remove_child')
+
+        # Test that the ancestors don't have changes
+        self.assertFalse(self.draft_store.has_changes(locations['grandparent']))
+        self.assertFalse(self.draft_store.has_changes(locations['parent']))
+
+        # Create a new child and attach it to parent
+        new_child_location = Location('edX', 'tree', 'has_changes_add_remove_child', 'html', 'new_child')
+        self.draft_store.create_and_save_xmodule(new_child_location, user_id=dummy_user)
+        parent = self.draft_store.get_item(locations['parent'])
+        parent.children += [new_child_location]
+        self.draft_store.update_item(parent, user_id=dummy_user)
+
+        # Verify that the ancestors now have changes
+        self.assertTrue(self.draft_store.has_changes(locations['grandparent']))
+        self.assertTrue(self.draft_store.has_changes(locations['parent']))
+
+        # Remove the parent from the grandparent (parent is a vertical, so is still in draft state)
+        grandparent = self.draft_store.get_item(locations['grandparent'])
+        grandparent.children = [locations['parent_sibling']]
+        self.draft_store.update_item(grandparent, user_id=dummy_user)
+
+        # Verify that grandparent now has no changes
+        self.assertFalse(self.draft_store.has_changes(locations['grandparent']))
+
     def test_update_edit_info(self):
         """
         Tests that edited_on and edited_by are set correctly during an update
