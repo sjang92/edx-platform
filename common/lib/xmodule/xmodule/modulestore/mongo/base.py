@@ -947,6 +947,15 @@ class MongoModuleStore(ModuleStoreWriteBase):
         if result['n'] == 0:
             raise ItemNotFoundError(location)
 
+    def _update_ancestors(self, location, update):
+        """
+        Recursively applies update to all the ancestors of location
+        """
+        parent = self.get_parent_location(as_published(location))
+        if parent:
+            self._update_single_item(parent, update)
+            self._update_ancestors(parent, update)
+
     def update_item(self, xblock, user_id=None, allow_not_found=False, force=False, isPublish=False):
         """
         Update the persisted version of xblock to reflect its current values.
@@ -981,6 +990,13 @@ class MongoModuleStore(ModuleStoreWriteBase):
                 children = self._convert_reference_fields_to_strings(xblock, {'children': xblock.children})
                 payload.update({'definition.children': children['children']})
             self._update_single_item(xblock.scope_ids.usage_id, payload)
+
+            # update subtree edited info for ancestors
+            ancestor_payload = {
+                'edit_info.subtree_edited_on': now,
+                'edit_info.subtree_edited_by': user_id
+            }
+            self._update_ancestors(xblock.scope_ids.usage_id, ancestor_payload)
 
             # recompute (and update) the metadata inheritance tree which is cached
             self.refresh_cached_metadata_inheritance_tree(xblock.scope_ids.usage_id.course_key, xblock.runtime)

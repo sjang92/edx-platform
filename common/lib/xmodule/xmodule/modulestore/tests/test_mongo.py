@@ -528,7 +528,7 @@ class TestMongoModuleStore(unittest.TestCase):
         self.draft_store.publish(location, dummy_user)
         self.assertFalse(self.draft_store.has_changes(location))
 
-    def _create_test_tree(self, name):
+    def _create_test_tree(self, name, user_id=123):
         """
         Creates and returns a tree with the following structure:
         Grandparent
@@ -538,8 +538,6 @@ class TestMongoModuleStore(unittest.TestCase):
                 Child Sibling
 
         """
-        dummy_user = 123
-
         locations = {
             'grandparent': Location('edX', 'tree', name, 'chapter', 'grandparent'),
             'parent_sibling': Location('edX', 'tree', name, 'sequential', 'parent_sibling'),
@@ -549,18 +547,18 @@ class TestMongoModuleStore(unittest.TestCase):
         }
 
         for key in locations:
-            self.draft_store.create_and_save_xmodule(locations[key], user_id=dummy_user)
+            self.draft_store.create_and_save_xmodule(locations[key], user_id=user_id)
 
         grandparent = self.draft_store.get_item(locations['grandparent'])
         grandparent.children += [locations['parent_sibling'], locations['parent']]
-        self.draft_store.update_item(grandparent, user_id=dummy_user)
+        self.draft_store.update_item(grandparent, user_id=user_id)
 
         parent = self.draft_store.get_item(locations['parent'])
         parent.children += [locations['child_sibling'], locations['child']]
-        self.draft_store.update_item(parent, user_id=dummy_user)
+        self.draft_store.update_item(parent, user_id=user_id)
 
-        self.draft_store.publish(locations['parent'], dummy_user)
-        self.draft_store.publish(locations['parent_sibling'], dummy_user)
+        self.draft_store.publish(locations['parent'], user_id)
+        self.draft_store.publish(locations['parent_sibling'], user_id)
 
         return locations
 
@@ -663,6 +661,50 @@ class TestMongoModuleStore(unittest.TestCase):
         # Verify that ancestors now have no changes
         self.assertFalse(self.draft_store.has_changes(locations['grandparent']))
         self.assertFalse(self.draft_store.has_changes(locations['parent']))
+
+    def test_update_edit_info_ancestors(self):
+        """
+        Tests that edited_on, edited_by, subtree_edited_on, and subtree_edited_by are set correctly during update
+        """
+        create_user = 123
+        edit_user = 456
+        locations = self._create_test_tree('update_edit_info_ancestors', create_user)
+
+        def check_node(location, after, before, by, subtree_after, subtree_before, subtree_by):
+            node = self.draft_store.get_item(locations[key])
+            if after:
+                self.assertLess(after, node.edited_on)
+            self.assertLess(node.edited_on, before)
+            self.assertEqual(node.edited_by, by)
+            if subtree_after:
+                self.assertLess(subtree_after, node.subtree_edited_on)
+            self.assertLess(node.subtree_edited_on, subtree_before)
+            self.assertEqual(node.subtree_edited_by, subtree_by)
+
+        after_create = datetime.now(UTC)
+        # Verify that all nodes were last edited in the past by create_user
+        for key in locations:
+            check_node(key, None, after_create, create_user, None, after_create, create_user)
+
+        # Change the child
+        child = self.draft_store.get_item(locations['child'])
+        child.display_name = 'Changed Display Name'
+        self.draft_store.update_item(child, user_id=edit_user)
+
+        after_edit = datetime.now(UTC)
+        ancestors = ['parent', 'grandparent']
+        others = ['child_sibling', 'parent_sibling']
+
+        # Verify that child was last edited between after_create and after_edit by edit_user
+        check_node('child', after_create, after_edit, edit_user, after_create, after_edit, edit_user)
+
+        # Verify that ancestors edit info is unchanged, but their subtree edit info matches child
+        for key in ancestors:
+            check_node(key, None, after_create, create_user, after_create, after_edit, edit_user)
+
+        # Verify that others have unchanged edit info
+        for key in others:
+            check_node(key, None, after_create, create_user, None, after_create, create_user)
 
     def test_update_edit_info(self):
         """
