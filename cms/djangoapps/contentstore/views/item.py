@@ -62,7 +62,7 @@ def hash_resource(resource):
 
 
 # pylint: disable=unused-argument
-@require_http_methods(("DELETE", "GET", "PUT", "POST"))
+@require_http_methods(("DELETE", "GET", "PUT", "POST", "PATCH"))
 @login_required
 @expect_json
 def xblock_handler(request, usage_key_string):
@@ -75,7 +75,7 @@ def xblock_handler(request, usage_key_string):
         json: returns representation of the xblock (locator id, data, and metadata).
               if ?fields=graderType, it returns the graderType for the unit instead of the above.
         html: returns HTML for rendering the xblock (which includes both the "preview" view and the "editor" view)
-    PUT or POST
+    PUT or POST or PATCH
         json: if xblock locator is specified, update the xblock instance. The json payload can contain
               these fields, all optional:
                 :data: the new value for the data.
@@ -131,7 +131,7 @@ def xblock_handler(request, usage_key_string):
                 grader_type=request.json.get('graderType'),
                 publish=request.json.get('publish'),
             )
-    elif request.method in ('PUT', 'POST'):
+    elif request.method in ('PUT', 'POST', 'PATCH'):
         if 'duplicate_source_locator' in request.json:
             parent_usage_key = UsageKey.from_string(request.json['parent_locator'])
             duplicate_source_usage_key = UsageKey.from_string(request.json['duplicate_source_locator'])

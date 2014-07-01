@@ -1,7 +1,7 @@
 define(["backbone", "js/utils/module"], function(Backbone, ModuleUtils) {
     var XBlockInfo = Backbone.Model.extend({
 
-        urlRoot: '/xblock/outline',
+        urlRoot: '/xblock',
 
         defaults: {
             "id": null,
@@ -17,17 +17,21 @@ define(["backbone", "js/utils/module"], function(Backbone, ModuleUtils) {
             "release_date": null
         },
 
-        parse: function (response) {
+        parse: function(response) {
             var i, rawChildren, children;
             rawChildren = response.children;
             children = [];
             if (rawChildren) {
                 for (i=0; i < rawChildren.length; i++) {
-                    children.push(new XBlockInfo(rawChildren[i], { parse: true }));
+                    children.push(this.createChild(rawChildren[i]));
                 }
             }
             response.children = children;
             return response;
+        },
+
+        createChild: function(response) {
+            return new XBlockInfo(response, { parse: true });
         }
     });
     return XBlockInfo;

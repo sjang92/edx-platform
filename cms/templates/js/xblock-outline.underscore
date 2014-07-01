@@ -11,10 +11,12 @@
                 <h3 class="xblock-title">
             <% } %>
 
-                <% if (xblockInfo.get('studio_url')) { %>
+                <% if (xblockInfo.get('studio_url') && xblockInfo.get('category') !== 'chapter') { %>
                     <a href="<%= xblockInfo.get('studio_url') %>"><%= xblockInfo.get('display_name') %></a>
                 <% } else { %>
-                    <%= xblockInfo.get('display_name') %>
+                    <div class="wrapper-xblock-field" data-field="display_name">
+                        <div class="is-editable xblock-field-value"><%= xblockInfo.get('display_name') %></h1>
+                    </div>
                 <% } %>
             </h3>
 

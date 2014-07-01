@@ -3,7 +3,7 @@
  */
 define(["jquery", "underscore", "gettext", "js/views/utils/view_utils", "js/utils/module"],
     function($, _, gettext, ViewUtils, ModuleUtils) {
-        var addXBlock, deleteXBlock;
+        var addXBlock, deleteXBlock, createUpdateRequestData, updateXBlockField;
 
         /**
          * Adds an xblock based upon the data attributes of the specified add button. A promise
@@ -60,8 +60,28 @@ define(["jquery", "underscore", "gettext", "js/views/utils/view_utils", "js/util
             return deletion.promise();
         };
 
+        createUpdateRequestData = function(fieldName, newValue) {
+            var metadata = {};
+            metadata[fieldName] = newValue;
+            return {
+                metadata: metadata
+            };
+        };
+
+        updateXBlockField = function(xblockInfo, fieldName, newValue) {
+            var requestData = createUpdateRequestData(fieldName, newValue);
+            ViewUtils.runOperationShowingMessage(gettext('Saving&hellip;'),
+                function() {
+                    return xblockInfo.save(requestData, { patch: true });
+                }).done(function() {
+                    // Update the model so that we get the latest publish and last modified information.
+                    xblockInfo.fetch();
+                });
+        };
+
         return {
             'addXBlock': addXBlock,
-            'deleteXBlock': deleteXBlock
+            'deleteXBlock': deleteXBlock,
+            'updateXBlockField': updateXBlockField
         };
     });

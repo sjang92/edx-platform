@@ -1,5 +1,6 @@
-define(["jquery", "underscore", "gettext", "js/views/baseview", "js/views/utils/xblock_utils"],
-    function($, _, gettext, BaseView, XBlockViewUtils) {
+define(["jquery", "underscore", "gettext", "js/views/baseview", "js/views/utils/xblock_utils",
+        "js/views/xblock_string_field_editor"],
+    function($, _, gettext, BaseView, XBlockViewUtils, XBlockStringFieldEditor) {
 
         var XBlockOutlineView = BaseView.extend({
             // takes XBlockInfo as a model
@@ -11,12 +12,19 @@ define(["jquery", "underscore", "gettext", "js/views/baseview", "js/views/utils/
                     this.template = this.loadTemplate('xblock-outline');
                 }
                 this.parentInfo = this.options.parentInfo;
+                this.parentView = this.options.parentView;
+                this.model.on('change', this.onXBlockChange, this);
             },
 
             render: function() {
                 var i, children, listElement, childOutlineView;
                 this.renderTemplate();
                 this.addButtonActions(this.$el);
+                this.nameEditor = new XBlockStringFieldEditor({
+                    el: this.$('.wrapper-xblock-field'),
+                    model: this.model
+                });
+                this.nameEditor.render();
                 if (this.shouldRenderChildren()) {
                     listElement = this.$('.sortable-list');
                     children = this.model.get('children');
@@ -49,7 +57,8 @@ define(["jquery", "underscore", "gettext", "js/views/baseview", "js/views/utils/
                 return new XBlockOutlineView({
                     model: xblockInfo,
                     parentInfo: parentInfo,
-                    template: this.template
+                    template: this.template,
+                    parentView: this
                 });
             },
 
@@ -100,10 +109,25 @@ define(["jquery", "underscore", "gettext", "js/views/baseview", "js/views/utils/
                 return xblockType;
             },
 
-            deleteXBlock: function(target) {
+            onXBlockChange: function() {
+                var oldElement = this.$el;
+                this.render();
+                if (this.parentInfo) {
+                    oldElement.replaceWith(this.$el);
+                }
+            },
+
+            onChildDeleted: function() {
+                // Update the model so that we get the latest publish and last modified information.
+                this.model.fetch();
+            },
+
+            deleteXBlock: function() {
+                var parentView = this.parentView;
                 XBlockViewUtils.deleteXBlock(this.model).done(function() {
-                    var item = target.closest('.outline-item');
-                    item.remove();
+                    if (parentView) {
+                        parentView.onChildDeleted();
+                    }
                 });
             }
         });

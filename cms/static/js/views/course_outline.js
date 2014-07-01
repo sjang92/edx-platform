@@ -6,15 +6,6 @@ define(["jquery", "underscore", "gettext", "js/views/xblock_outline", "js/views/
 
             initialize: function() {
                 XBlockOutlineView.prototype.initialize.call(this);
-                this.model.on('change', this.onXBlockChange, this);
-            },
-
-            onXBlockChange: function() {
-                var oldElement = this.$el;
-                this.render();
-                if (this.parentInfo) {
-                    oldElement.replaceWith(this.$el);
-                }
             },
 
             shouldRenderChildren: function() {
@@ -26,7 +17,19 @@ define(["jquery", "underscore", "gettext", "js/views/xblock_outline", "js/views/
                 return new CourseOutlineView({
                     model: xblockInfo,
                     parentInfo: parentInfo,
-                    template: this.template
+                    template: this.template,
+                    parentView: this
+                });
+            },
+
+            refresh: function() {
+                var self = this,
+                    url = '/xblock/outline/' + this.model.id;
+                this.model.fetch({
+                    url: url,
+                    success: function() {
+                        self.onXBlockChange();
+                    }
                 });
             },
 
@@ -35,10 +38,9 @@ define(["jquery", "underscore", "gettext", "js/views/xblock_outline", "js/views/
                 XBlockOutlineView.prototype.addButtonActions.call(this, element);
                 element.find('.add-button').click(function(event) {
                     event.preventDefault();
-                    XBlockViewUtils.addXBlock($(event.target)).done(function(locator) {
-                        // TODO: add just the new element (although how will the publish status get propagated?)
-                        self.model.fetch();
-                    });
+                    // TODO: add just the new element rather than refreshing the entire view
+                    // (although how will the publish status get propagated?)
+                    XBlockViewUtils.addXBlock($(event.target)).done(_.bind(self.refresh, self));
                 });
             }
         });
