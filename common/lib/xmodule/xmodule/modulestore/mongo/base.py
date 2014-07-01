@@ -949,22 +949,17 @@ class MongoModuleStore(ModuleStoreWriteBase):
         if result['n'] == 0:
             raise ItemNotFoundError(location)
 
-    def _update_ancestors(self, location, update, filter=None):
+    def _update_ancestors(self, location, universal_update, filtered_update=None, filter=None):
         """
         Recursively applies update to all the ancestors of location as long as filter returns True.
         """
         parent = self.get_parent_location(as_published(location))
-
-        if not parent:
-            return
-
-        if filter:
-            if not filter(parent):
-                print 'parent filtered'
-                return
-
-        self._update_single_item(parent, update)
-        self._update_ancestors(parent, update, filter)
+        if parent:
+            self._update_single_item(parent, universal_update)
+            allow_filter = filtered_update and filter and filter(parent)
+            if allow_filter:
+                self._update_single_item(parent, filtered_update)
+            self._update_ancestors(parent, universal_update, filtered_update if allow_filter else None, filter)
 
     def update_item(self, xblock, user_id=None, allow_not_found=False, force=False, isPublish=False):
         """
@@ -992,12 +987,13 @@ class MongoModuleStore(ModuleStoreWriteBase):
                 'edit_info.subtree_edited_by': user_id,
             }
 
-            if xblock.category not in DIRECT_ONLY_CATEGORIES:
-                payload['edit_info.has_changes'] = not isPublish
-
             if isPublish:
-                payload['edit_info.published_date'] = datetime.now(UTC)
+                payload['edit_info.published_date'] = now
                 payload['edit_info.published_by'] = user_id
+                payload['edit_info.has_changes'] = False
+            # ignore edits to direct only xblocks
+            elif xblock.category not in DIRECT_ONLY_CATEGORIES:
+                payload['edit_info.has_changes'] = True
 
             if xblock.has_children:
                 children = self._convert_reference_fields_to_strings(xblock, {'children': xblock.children})
@@ -1005,23 +1001,32 @@ class MongoModuleStore(ModuleStoreWriteBase):
             self._update_single_item(xblock.scope_ids.usage_id, payload)
 
             # update ancestors with the new edited info
-            subtree_payload = {
+            ancestor_payload = {
                 'edit_info.subtree_edited_on': now,
                 'edit_info.subtree_edited_by': user_id,
             }
-            self._update_ancestors(xblock.scope_ids.usage_id, subtree_payload)
 
-            if xblock.category not in DIRECT_ONLY_CATEGORIES:
-                # when publishing, has_changes shouldn't be set to false on a parent if a child still has changes
-                def children_are_unchanged(location):
-                    for child in self.get_item(location).children:
-                        # ignore the item being published because its draft hasn't been deleted yet
+            filtered_payload = None
+
+            if isPublish:
+                filtered_payload = { 'edit_info.has_changes': False }
+            # ignore edits to direct only xblocks
+            elif xblock.category not in DIRECT_ONLY_CATEGORIES:
+                ancestor_payload['edit_info.has_changes'] = True
+
+            # when publishing, has_changes shouldn't be set to false on a parent if a child still has changes
+            def children_are_unchanged(location):
+                item = self.get_item(location)
+                if item.has_children:
+                    for child in item.children:
+                        # ignore the item currently being published because its draft hasn't been deleted yet
                         if child != xblock.location and self.get_item(child).has_changes:
                             return False
-                    return True
-                has_changes_payload = { 'edit_info.has_changes': not isPublish }
-                self._update_ancestors(xblock.scope_ids.usage_id, has_changes_payload,
-                                       children_are_unchanged if isPublish else None)
+                return True
+
+            # apply the update to this xblock's ancestors
+            self._update_ancestors(xblock.scope_ids.usage_id, ancestor_payload,
+                                   filtered_payload, children_are_unchanged)
 
             # recompute (and update) the metadata inheritance tree which is cached
             self.refresh_cached_metadata_inheritance_tree(xblock.scope_ids.usage_id.course_key, xblock.runtime)
