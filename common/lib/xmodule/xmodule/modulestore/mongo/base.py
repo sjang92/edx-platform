@@ -987,19 +987,6 @@ class MongoModuleStore(ModuleStoreWriteBase):
                 'edit_info.subtree_edited_by': user_id,
             }
 
-            if isPublish:
-                payload['edit_info.published_date'] = now
-                payload['edit_info.published_by'] = user_id
-                payload['edit_info.has_changes'] = False
-            # ignore edits to direct only xblocks
-            elif xblock.category not in DIRECT_ONLY_CATEGORIES:
-                payload['edit_info.has_changes'] = True
-
-            if xblock.has_children:
-                children = self._convert_reference_fields_to_strings(xblock, {'children': xblock.children})
-                payload.update({'definition.children': children['children']})
-            self._update_single_item(xblock.scope_ids.usage_id, payload)
-
             # update ancestors with the new edited info
             ancestor_payload = {
                 'edit_info.subtree_edited_on': now,
@@ -1009,10 +996,33 @@ class MongoModuleStore(ModuleStoreWriteBase):
             filtered_payload = None
 
             if isPublish:
+                payload['edit_info.published_date'] = now
+                payload['edit_info.published_by'] = user_id
+                payload['edit_info.has_changes'] = False
                 filtered_payload = { 'edit_info.has_changes': False }
-            # ignore edits to direct only xblocks
+            # edits to draft xblocks always cause changes
             elif xblock.category not in DIRECT_ONLY_CATEGORIES:
+                payload['edit_info.has_changes'] = True
                 ancestor_payload['edit_info.has_changes'] = True
+            # edits to direct xblocks only cause changes if there is a child with changes
+            # this could happen when a child is added or removed
+            else:
+                child_changes = False
+                if xblock.has_children:
+                    for child in xblock.children:
+                        # guard against children that don't yet exist on import
+                        try:
+                            if self.get_item(child).has_changes:
+                                child_changes = True
+                        except ItemNotFoundError:
+                            pass
+                payload['edit_info.has_changes'] = child_changes
+                ancestor_payload['edit_info.has_changes'] = child_changes
+
+            if xblock.has_children:
+                children = self._convert_reference_fields_to_strings(xblock, {'children': xblock.children})
+                payload.update({'definition.children': children['children']})
+            self._update_single_item(xblock.scope_ids.usage_id, payload)
 
             # when publishing, has_changes shouldn't be set to false on a parent if a child still has changes
             def children_are_unchanged(location):

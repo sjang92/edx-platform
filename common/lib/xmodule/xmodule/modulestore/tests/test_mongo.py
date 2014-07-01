@@ -614,8 +614,6 @@ class TestMongoModuleStore(unittest.TestCase):
         self.draft_store.update_item(child, user_id=dummy_user)
         self.draft_store.update_item(child_sibling, user_id=dummy_user)
 
-        import nose.tools; nose.tools.set_trace()
-
         # Verify that ancestors have changes
         self.assertTrue(self.draft_store.has_changes(locations['grandparent']))
         self.assertTrue(self.draft_store.has_changes(locations['parent']))
