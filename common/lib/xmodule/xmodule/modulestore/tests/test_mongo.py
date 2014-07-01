@@ -487,7 +487,7 @@ class TestMongoModuleStore(unittest.TestCase):
 
     def test_has_changes_direct_only(self):
         """
-        Tests that has_changes() returns false when an xblock in a direct only category is checked
+        Tests that has_changes() returns false when a new xblock in a direct only category is checked
         """
         course_location = Location('edx', 'direct', '2012_Fall', 'course', 'test_course')
         chapter_location = Location('edx', 'direct', '2012_Fall', 'chapter', 'test_chapter')
@@ -541,11 +541,11 @@ class TestMongoModuleStore(unittest.TestCase):
         dummy_user = 123
 
         locations = {
-            'grandparent': Location('edX', 'tree', name, 'sequential', 'grandparent'),
-            'parent_sibling': Location('edX', 'tree', name, 'vertical', 'parent_sibling'),
-            'parent': Location('edX', 'tree', name, 'vertical', 'parent'),
-            'child_sibling': Location('edX', 'tree', name, 'html', 'child_sibling'),
-            'child': Location('edX', 'tree', name, 'html', 'child'),
+            'grandparent': Location('edX', 'tree', name, 'chapter', 'grandparent'),
+            'parent_sibling': Location('edX', 'tree', name, 'sequential', 'parent_sibling'),
+            'parent': Location('edX', 'tree', name, 'sequential', 'parent'),
+            'child_sibling': Location('edX', 'tree', name, 'vertical', 'child_sibling'),
+            'child': Location('edX', 'tree', name, 'vertical', 'child'),
         }
 
         for key in locations:
@@ -645,7 +645,7 @@ class TestMongoModuleStore(unittest.TestCase):
         self.assertFalse(self.draft_store.has_changes(locations['parent']))
 
         # Create a new child and attach it to parent
-        new_child_location = Location('edX', 'tree', 'has_changes_add_remove_child', 'html', 'new_child')
+        new_child_location = Location('edX', 'tree', 'has_changes_add_remove_child', 'vertical', 'new_child')
         self.draft_store.create_and_save_xmodule(new_child_location, user_id=dummy_user)
         parent = self.draft_store.get_item(locations['parent'])
         parent.children += [new_child_location]
@@ -655,13 +655,14 @@ class TestMongoModuleStore(unittest.TestCase):
         self.assertTrue(self.draft_store.has_changes(locations['grandparent']))
         self.assertTrue(self.draft_store.has_changes(locations['parent']))
 
-        # Remove the parent from the grandparent (parent is a vertical, so is still in draft state)
-        grandparent = self.draft_store.get_item(locations['grandparent'])
-        grandparent.children = [locations['parent_sibling']]
-        self.draft_store.update_item(grandparent, user_id=dummy_user)
+        # Remove the child from the parent
+        parent = self.draft_store.get_item(locations['parent'])
+        parent.children = [locations['child'], locations['child_sibling']]
+        self.draft_store.update_item(parent, user_id=dummy_user)
 
-        # Verify that grandparent now has no changes
+        # Verify that ancestors now have no changes
         self.assertFalse(self.draft_store.has_changes(locations['grandparent']))
+        self.assertFalse(self.draft_store.has_changes(locations['parent']))
 
     def test_update_edit_info(self):
         """
