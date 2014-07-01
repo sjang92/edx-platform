@@ -55,6 +55,13 @@ class GroupConfiguration(object):
         css = 'a.group-toggle'
         self.find_css(css).first.click()
 
+    def edit(self):
+        """
+        EDit group configuration.
+        """
+        css = '.action-edit'
+        self.find_css(css).first.click()
+
     def save(self):
         """
         Save group configuration.

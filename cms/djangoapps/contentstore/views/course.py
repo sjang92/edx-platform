@@ -910,7 +910,7 @@ class GroupConfiguration(object):
         return max(used_ids) + 1 if used_ids else 0
 
 
-@require_http_methods(("GET", "POST"))
+@require_http_methods(("GET", "POST", "PUT"))
 @login_required
 @ensure_csrf_cookie
 def group_configurations_list_handler(request, course_key_string):
@@ -936,7 +936,7 @@ def group_configurations_list_handler(request, course_key_string):
             'configurations': [u.to_json() for u in course.user_partitions] if splite_test_enabled else None,
         })
 
-    if request.method == 'POST':
+    if request.method == 'POST' or request.method == 'PUT':
         # create a new group configuration for the course
         try:
             configuration = GroupConfiguration.parse(request.body)
@@ -964,11 +964,28 @@ def group_configurations_list_handler(request, course_key_string):
         return response
 
 
-@require_http_methods(("GET", "POST"))
 @login_required
 @ensure_csrf_cookie
+@require_http_methods(("POST", "PUT"))
 def group_configurations_detail_handler(request, course_key_string, group_configuration_id):
-    return JsonResponse(status=404)
+    """
+    JSON API endpoint for manipulating a group configuration via its internal ID.
+    Used by the Backbone application.
+
+    POST or PUT
+        json: update group configuration based on provided information
+    """
+    if request.method in ('POST', 'PUT'):  # can be either and sometimes
+                                           # django is rewriting one to the other
+        try:
+            configuration = json.loads(request.body)
+        except TextbookValidationError as err:
+            return JsonResponse({"error": err.message}, status=400)
+
+        if not configuration.get("id"):
+            configuration["id"] = random.choice(string.digits)
+
+        return JsonResponse(configuration, status=201)
 
 
 def _get_course_creator_status(user):
