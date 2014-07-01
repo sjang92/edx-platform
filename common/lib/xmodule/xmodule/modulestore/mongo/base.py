@@ -953,14 +953,20 @@ class MongoModuleStore(ModuleStoreWriteBase):
 
     def _update_ancestors(self, location, update, filter=None):
         """
-        Recursively applies update to all the parents of location as long as filter returns True.
+        Recursively applies update to all the ancestors of location as long as filter returns True.
         """
-        for parent in self.get_parent_locations(location):
-            if filter:
-                if not filter(parent):
-                    continue
-            self._update_single_item(parent, update)
-            self._update_ancestors(parent, update, filter)
+        parent = self.get_parent_location(as_published(location), revision=REVISION_OPTION_DRAFT_PREFERRED)
+
+        if not parent:
+            return
+
+        if filter:
+            if not filter(parent):
+                print 'parent filtered'
+                return
+
+        self._update_single_item(parent, update)
+        self._update_ancestors(parent, update, filter)
 
     def update_item(self, xblock, user_id=None, allow_not_found=False, force=False, isPublish=False):
         """
@@ -982,20 +988,18 @@ class MongoModuleStore(ModuleStoreWriteBase):
             payload = {
                 'definition.data': definition_data,
                 'metadata': self._convert_reference_fields_to_strings(xblock, own_metadata(xblock)),
-                'edit_info': {
-                    'edited_on': now,
-                    'edited_by': user_id,
-                    'subtree_edited_on': now,
-                    'subtree_edited_by': user_id,
-                }
+                'edit_info.edited_on': now,
+                'edit_info.edited_by': user_id,
+                'edit_info.subtree_edited_on': now,
+                'edit_info.subtree_edited_by': user_id,
             }
 
             if xblock.category not in DIRECT_ONLY_CATEGORIES:
-                payload['edit_info']['has_changes'] = not isPublish
+                payload['edit_info.has_changes'] = not isPublish
 
             if isPublish:
-                payload['edit_info']['published_date'] = datetime.now(UTC)
-                payload['edit_info']['published_by'] = user_id
+                payload['edit_info.published_date'] = datetime.now(UTC)
+                payload['edit_info.published_by'] = user_id
 
             if xblock.has_children:
                 children = self._convert_reference_fields_to_strings(xblock, {'children': xblock.children})
@@ -1004,10 +1008,8 @@ class MongoModuleStore(ModuleStoreWriteBase):
 
             # update ancestors with the new edited info
             subtree_payload = {
-                'edit_info': {
-                    'subtree_edited_on': now,
-                    'subtree_edited_by': user_id,
-                }
+                'edit_info.subtree_edited_on': now,
+                'edit_info.subtree_edited_by': user_id,
             }
             self._update_ancestors(xblock.scope_ids.usage_id, subtree_payload)
 
@@ -1015,10 +1017,11 @@ class MongoModuleStore(ModuleStoreWriteBase):
                 # when publishing, has_changes shouldn't be set to false on a parent if a child still has changes
                 def children_are_unchanged(location):
                     for child in self.get_item(location).children:
-                        if child.has_changes:
+                        # ignore the item being published because its draft hasn't been deleted yet
+                        if child != xblock.location and self.get_item(child).has_changes:
                             return False
                     return True
-                has_changes_payload = { 'edit_info': { 'has_changes': not isPublish }}
+                has_changes_payload = { 'edit_info.has_changes': not isPublish }
                 self._update_ancestors(xblock.scope_ids.usage_id, has_changes_payload,
                                        children_are_unchanged if isPublish else None)
 

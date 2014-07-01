@@ -371,7 +371,7 @@ class DraftModuleStore(MongoModuleStore):
                     raise
 
         xblock.location = draft_loc
-        super(DraftModuleStore, self).update_item(xblock, user_id, allow_not_found, isPublish)
+        super(DraftModuleStore, self).update_item(xblock, user_id, allow_not_found, isPublish=isPublish)
         return wrap_draft(xblock)
 
     def delete_item(self, location, user_id, revision=None, **kwargs):

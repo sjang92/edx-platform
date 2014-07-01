@@ -567,35 +567,58 @@ class TestMongoModuleStore(unittest.TestCase):
         """
         Tests that has_changes() returns true on ancestors when a child is changed
         """
-        dummy_user = 123
-        locations = self._create_test_tree('has_changes_ancestors')
+        # dummy_user = 123
+        # locations = self._create_test_tree('has_changes_ancestors')
+        #
+        # # Verify that there are no unpublished changes
+        # for key in locations:
+        #     self.assertFalse(self.draft_store.has_changes(locations[key]))
+        #
+        # # Change the child
+        # child = self.draft_store.get_item(locations['child'])
+        # child.display_name = 'Changed Display Name'
+        # self.draft_store.update_item(child, user_id=dummy_user)
+        #
+        # # All ancestors should have changes, but not siblings
+        # self.assertTrue(self.draft_store.has_changes(locations['grandparent']))
+        # self.assertTrue(self.draft_store.has_changes(locations['parent']))
+        # self.assertTrue(self.draft_store.has_changes(locations['child']))
+        # self.assertFalse(self.draft_store.has_changes(locations['parent_sibling']))
+        # self.assertFalse(self.draft_store.has_changes(locations['child_sibling']))
+        #
+        # self.draft_store.publish(locations['grandparent'], dummy_user)
+        #
+        # # Verify that there are no unpublished changes
+        # for key in locations:
+        #     self.assertFalse(self.draft_store.has_changes(locations[key]))
 
-        # Verify that there are no unpublished changes
-        for key in locations:
-            self.assertFalse(self.draft_store.has_changes(locations[key]))
 
-        # Change the child
-        child = self.draft_store.get_item(locations['child'])
-        child.display_name = 'Changed Display Name'
-        self.draft_store.update_item(child, user_id=dummy_user)
+        parent_loc = Location('edX', 'tree', 'test', 'sequential', 'parent')
+        child_loc = Location('edX', 'tree', 'test', 'vertical', 'child')
+        self.draft_store.create_and_save_xmodule(parent_loc, user_id=123)
+        self.draft_store.create_and_save_xmodule(child_loc, user_id=123)
+        parent = self.draft_store.get_item(parent_loc)
+        parent.children += [child_loc]
+        self.draft_store.update_item(parent, user_id=123)
 
-        # All ancestors should have changes, but not siblings
-        self.assertTrue(self.draft_store.has_changes(locations['grandparent']))
-        self.assertTrue(self.draft_store.has_changes(locations['parent']))
-        self.assertTrue(self.draft_store.has_changes(locations['child']))
-        self.assertFalse(self.draft_store.has_changes(locations['parent_sibling']))
-        self.assertFalse(self.draft_store.has_changes(locations['child_sibling']))
 
-        self.draft_store.publish(locations['grandparent'], dummy_user)
+        import nose.tools; nose.tools.set_trace()
 
-        # Verify that there are no unpublished changes
-        for key in locations:
-            self.assertFalse(self.draft_store.has_changes(locations[key]))
+        child = self.draft_store.get_item(child_loc)
+        # self.draft_store.update_item(child, user_id=123, isPublish=True)
+        self.draft_store.publish(child_loc, 123)
 
-    def test_has_changes_publish_parents(self):
+
+
+        self.fail("fix me")
+
+    def test_has_changes_publish_ancestors(self):
         """
         Tests that has_changes() returns false after a child is published only if all children are unchanged
         """
+        dummy_user = 123
+        locations = self._create_test_tree('has_changes_publish_ancestors')
+
         self.fail("needs to be implemented")
 
     def test_update_edit_info(self):
