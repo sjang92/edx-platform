@@ -951,7 +951,7 @@ class MongoModuleStore(ModuleStoreWriteBase):
         """
         Recursively applies update to all the ancestors of location
         """
-        parent = self.get_parent_location(as_published(location))
+        parent = self._get_raw_parent_location(as_published(location), ModuleStoreEnum.RevisionOption.draft_preferred)
         if parent:
             self._update_single_item(parent, update)
             self._update_ancestors(parent, update)
@@ -1028,20 +1028,10 @@ class MongoModuleStore(ModuleStoreWriteBase):
                         value[key] = subvalue.to_deprecated_string()
         return jsonfields
 
-    def get_parent_location(self, location, revision=ModuleStoreEnum.RevisionOption.published_only, **kwargs):
+    def _get_raw_parent_location(self, location, revision=ModuleStoreEnum.RevisionOption.published_only):
         '''
-        Find the location that is the parent of this location in this course.
-
-        Returns: version agnostic location (revision always None) as per the rest of mongo.
-
-        Args:
-            revision:
-                ModuleStoreEnum.RevisionOption.published_only
-                    - return only the PUBLISHED parent if it exists, else returns None
-                ModuleStoreEnum.RevisionOption.draft_preferred
-                    - return either the DRAFT or PUBLISHED parent,
-                        preferring DRAFT, if parent(s) exists,
-                        else returns None
+        Helper for get_parent_location that finds the location that is the parent of this location in this course,
+        but does NOT return a version agnostic location.
         '''
         assert location.revision is None
         assert revision == ModuleStoreEnum.RevisionOption.published_only \
@@ -1079,7 +1069,27 @@ class MongoModuleStore(ModuleStoreWriteBase):
             # since we sorted by SORT_REVISION_FAVOR_DRAFT, the 0'th parent is the one we want
             found_id = parents[0]['_id']
             # don't disclose revision outside modulestore
-            return as_published(Location._from_deprecated_son(found_id, location.course_key.run))
+            return Location._from_deprecated_son(found_id, location.course_key.run)
+
+    def get_parent_location(self, location, revision=ModuleStoreEnum.RevisionOption.published_only, **kwargs):
+        '''
+        Find the location that is the parent of this location in this course.
+
+        Returns: version agnostic location (revision always None) as per the rest of mongo.
+
+        Args:
+            revision:
+                ModuleStoreEnum.RevisionOption.published_only
+                    - return only the PUBLISHED parent if it exists, else returns None
+                ModuleStoreEnum.RevisionOption.draft_preferred
+                    - return either the DRAFT or PUBLISHED parent,
+                        preferring DRAFT, if parent(s) exists,
+                        else returns None
+        '''
+        parent = self._get_raw_parent_location(location, revision)
+        if parent:
+            return as_published(parent)
+        return None
 
     def get_modulestore_type(self, course_key=None):
         """
