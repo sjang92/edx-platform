@@ -592,7 +592,6 @@ class TestMongoModuleStore(unittest.TestCase):
         for key in locations:
             self.assertFalse(self.draft_store.has_changes(locations[key]))
 
-
     def test_has_changes_publish_ancestors(self):
         """
         Tests that has_changes() returns false after a child is published only if all children are unchanged
@@ -670,12 +669,15 @@ class TestMongoModuleStore(unittest.TestCase):
         edit_user = 456
         locations = self._create_test_tree('update_edit_info_ancestors', create_user)
 
-        def check_node(location, after, before, by, subtree_after, subtree_before, subtree_by):
-            node = self.draft_store.get_item(locations[key])
+        def check_node(location_key, after, before, edited_by, subtree_after, subtree_before, subtree_by):
+            """
+            Checks that the node given by location_key matches the given edit_info constraints.
+            """
+            node = self.draft_store.get_item(locations[location_key])
             if after:
                 self.assertLess(after, node.edited_on)
             self.assertLess(node.edited_on, before)
-            self.assertEqual(node.edited_by, by)
+            self.assertEqual(node.edited_by, edited_by)
             if subtree_after:
                 self.assertLess(subtree_after, node.subtree_edited_on)
             self.assertLess(node.subtree_edited_on, subtree_before)
