@@ -43,8 +43,9 @@
             font-weight: 400;
 
             &.is-disabled {
-              background-color: $gray-l2;
-              border-color: $gray-l2;
+              // TO-DO: will review styling before merge to master
+              // background-color: $gray-l2;
+              // border-color: $gray-l2;
             }
           }
 
