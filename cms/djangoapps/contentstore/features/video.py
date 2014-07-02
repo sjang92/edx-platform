@@ -45,6 +45,7 @@ def i_created_a_video_component(_step):
     world.wait_for_present('.is-initialized')
     world.wait(DELAY)
     world.wait_for_invisible(SELECTORS['spinner'])
+    from nose.tools import set_trace; set_trace()
     if not world.youtube.config.get('youtube_api_blocked'):
         world.wait_for_visible(SELECTORS['controls'])
 

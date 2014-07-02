@@ -7,6 +7,7 @@ Acceptance tests for CMS Video Handout.
 from unittest import skipIf
 from ...pages.studio.auto_auth import AutoAuthPage
 from ...pages.studio.overview import CourseOutlinePage
+from ...pages.studio.video.video import VidoComponentPage
 from ...fixtures.course import CourseFixture, XBlockFixtureDesc
 from ..helpers import UniqueCourseTest, is_youtube_available
 
@@ -19,6 +20,8 @@ class VideoHandoutBaseTest(UniqueCourseTest):
         Initialization of pages and course fixture for tests
         """
         super(VideoHandoutBaseTest, self).setUp()
+
+        self.video = VidoComponentPage(self.browser)
 
         self.outline = CourseOutlinePage(
             self.browser,
@@ -34,7 +37,7 @@ class VideoHandoutBaseTest(UniqueCourseTest):
 
         self.handout = None
 
-    def navigate_to_unit(self):
+    def navigate_to_course_unit(self):
         """
         Install the course with required components and navigate to course unit page
         """
@@ -60,7 +63,7 @@ class VideoHandoutBaseTest(UniqueCourseTest):
             XBlockFixtureDesc('chapter', 'Test Section').add_children(
                 XBlockFixtureDesc('sequential', 'Test Subsection').add_children(
                     XBlockFixtureDesc("vertical", "Test Unit").add_children(
-                        XBlockFixtureDesc('video', 'Video', metadata=video_metadata),
+                        XBlockFixtureDesc('video', 'Video', metadata=video_metadata, publish='make_private'),
                     )
                 )
             )
@@ -86,7 +89,7 @@ class VideoHandoutBaseTest(UniqueCourseTest):
         # Visit Unit page
         self.outline.section('Test Section').subsection('Test Subsection').toggle_expand().unit('Test Unit').go_to()
 
-        # TODO! Add wait to ensure that all the required components have been loaded before doing any further action
+        self.video.wait_for_video_component_render()
 
 
 class VideoHandoutTest(VideoHandoutBaseTest):
@@ -95,11 +98,13 @@ class VideoHandoutTest(VideoHandoutBaseTest):
         """
         Scenario: Handout uploading works correctly
         Given I have created a Video component with handout file "textbook.pdf"
+        Then I can see video button "handout"
         And I can download handout file with mime type "application/pdf"
         """
         self.handout = 'textbook.pdf'
 
-        self.navigate_to_unit()
+        self.navigate_to_course_unit()
 
-        from nose.tools import  set_trace; set_trace()
+        self.assertTrue(self.video.is_download_handout_button_visible)
 
+        self.assertEqual(self.video.download_handout('application/pdf'), (True, True))

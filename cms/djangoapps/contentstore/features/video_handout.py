@@ -23,6 +23,7 @@ def i_can_download_handout_with_mime_type(_step, is_editor, mime_type):
     button = world.css_find(selector).first
     url = button['href']
     request = RequestHandlerWithSessionId()
+    from nose.tools import  set_trace; set_trace()
     assert_true(request.get(url).is_success())
     assert_true(request.check_header('content-type', mime_type))
 
