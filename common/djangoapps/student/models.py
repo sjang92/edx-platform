@@ -643,7 +643,6 @@ class CourseEnrollment(models.Model):
             enrollment.mode = "honor"
             enrollment.is_active = False
             enrollment.save()
-            print "CREATED"
 
         return enrollment
 
