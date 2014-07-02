@@ -92,6 +92,7 @@ define(["jquery", "underscore", "gettext", "js/views/baseview", "js/views/feedba
                 BaseView.prototype.initialize.call(this);
                 this.template = this.loadTemplate('publish-xblock');
                 this.model.on('sync', this.onSync, this);
+                this.renderPage = this.options.renderPage;
             },
 
             onSync: function(e) {
@@ -130,7 +131,7 @@ define(["jquery", "underscore", "gettext", "js/views/baseview", "js/views/feedba
                 if (e && e.preventDefault) {
                     e.preventDefault();
                 }
-                var xblockInfo = this.model, view;
+                var xblockInfo = this.model, view, renderPage = this.renderPage;
 
                 view = new PromptView.Warning({
                     title: gettext("Discard Changes"),
@@ -144,7 +145,8 @@ define(["jquery", "underscore", "gettext", "js/views/baseview", "js/views/feedba
                                     type: 'DELETE',
                                     url: xblockInfo.url()
                                 }).success(function () {
-                                    return window.location.reload();
+                                    xblockInfo.fetch();
+                                    renderPage();
                                 });
                             }
                         },
