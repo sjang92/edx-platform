@@ -956,7 +956,8 @@ class MongoModuleStore(ModuleStoreWriteBase):
             self._update_single_item(parent, update)
             self._update_ancestors(parent, update)
 
-    def update_item(self, xblock, user_id=None, allow_not_found=False, force=False, isPublish=False):
+    def update_item(self, xblock, user_id=None, allow_not_found=False, force=False, isPublish=False,
+                    is_publish_root=True):
         """
         Update the persisted version of xblock to reflect its current values.
 
@@ -966,6 +967,8 @@ class MongoModuleStore(ModuleStoreWriteBase):
         force: force is meaningless for this modulestore
         isPublish: an internal parameter that indicates whether this update is due to a Publish operation, and
           thus whether the item's published information should be updated.
+        is_publish_root: when publishing, this indicates whether xblock is the root of the publish and should
+          therefore propagate subtree edit info up the tree
         """
         try:
             definition_data = self._convert_reference_fields_to_strings(
@@ -992,11 +995,13 @@ class MongoModuleStore(ModuleStoreWriteBase):
             self._update_single_item(xblock.scope_ids.usage_id, payload)
 
             # update subtree edited info for ancestors
-            ancestor_payload = {
-                'edit_info.subtree_edited_on': now,
-                'edit_info.subtree_edited_by': user_id
-            }
-            self._update_ancestors(xblock.scope_ids.usage_id, ancestor_payload)
+            # don't update the subtree info for descendants of the publish root for efficiency
+            if (not isPublish) or (isPublish and is_publish_root):
+                ancestor_payload = {
+                    'edit_info.subtree_edited_on': now,
+                    'edit_info.subtree_edited_by': user_id
+                }
+                self._update_ancestors(xblock.scope_ids.usage_id, ancestor_payload)
 
             # recompute (and update) the metadata inheritance tree which is cached
             self.refresh_cached_metadata_inheritance_tree(xblock.scope_ids.usage_id.course_key, xblock.runtime)
