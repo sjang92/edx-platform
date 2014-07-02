@@ -5,7 +5,7 @@ Feature: Change Enrollment Events
 
   Scenario: I can change my enrollment
 	Given The course "6.002x" exists
-	And the course "6.002x" has verified and honor modes
+	And the course "6.002x" all enrollment modes
     And I am logged in
     Given I enable capturing of screenshots before and after each step
     And I visit the courses page
@@ -18,3 +18,6 @@ Feature: Change Enrollment Events
     Then I should be on the dashboard page
     And 2 "edx.course.enrollment.mode_changed" server events are emitted
 
+    # don't emit another mode_changed event upon unenrollment
+    When I unregister for the course numbered "6.002x"
+    Then 2 "edx.course.enrollment.mode_changed" server events are emitted

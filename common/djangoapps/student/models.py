@@ -732,11 +732,6 @@ class CourseEnrollment(models.Model):
                 'course_id': self.course_id.to_deprecated_string(),
                 'mode': self.mode,
             }
-            print "DATA"
-            print data
-            print "event_name"
-            print event_name
-
 
             with tracker.get_tracker().context(event_name, context):
                 tracker.emit(event_name, data)
@@ -1146,9 +1141,6 @@ def create_comments_service_user(user):
 
 @receiver(user_logged_in)
 def log_successful_login(sender, request, user, **kwargs):
-    print "SUCCESSFUL LOGIN"
-    print request.user
-    print request.user.username
     """Handler to log when logins have occurred successfully."""
     if settings.FEATURES['SQUELCH_PII_IN_LOGS']:
         AUDIT_LOG.info(u"Login success - user.id: {0}".format(user.id))
@@ -1158,7 +1150,6 @@ def log_successful_login(sender, request, user, **kwargs):
 
 @receiver(user_logged_out)
 def log_successful_logout(sender, request, user, **kwargs):
-    print "LOGOUT"
     """Handler to log when logouts have occurred successfully."""
     if settings.FEATURES['SQUELCH_PII_IN_LOGS']:
         AUDIT_LOG.info(u"Logout - user.id: {0}".format(request.user.id))
@@ -1169,7 +1160,6 @@ def log_successful_logout(sender, request, user, **kwargs):
 @receiver(user_logged_in)
 @receiver(user_logged_out)
 def enforce_single_login(sender, request, user, signal, **kwargs):
-    print "LOGIN LOGOUT"
     """
     Sets the current session id in the user profile,
     to prevent concurrent logins.

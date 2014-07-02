@@ -19,7 +19,7 @@ logger = getLogger(__name__)
 
 
 
-@step(u'the course "([^"]*)" has verified and honor modes$')
+@step(u'the course "([^"]*)" has all enrollment modes$')
 def add_enrollment_modes_to_course(step,course):
     world.CourseModeFactory.create(
         course_id = SlashSeparatedCourseKey("edx",course,'Test_Course'),
