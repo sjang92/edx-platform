@@ -111,21 +111,6 @@ class MongoContentStore(ContentStore):
             else:
                 return None
 
-    def get_stream(self, location):
-        content_id, __ = self.asset_db_key(location)
-        try:
-            handle = self.fs.get(content_id)
-        except NoFile:
-            raise NotFoundError()
-
-        return handle
-
-    def close_stream(self, handle):
-        try:
-            handle.close()
-        except Exception:  # pylint: disable=broad-except
-            pass
-
     def export(self, location, output_directory):
         content = self.find(location)
 
