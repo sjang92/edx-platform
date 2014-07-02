@@ -153,9 +153,6 @@ class DraftModuleStore(MongoModuleStore):
         if not self.has_course(source_course_id):
             raise ItemNotFoundError("Cannot find a course at {0}. Aborting".format(source_course_id))
 
-        # clone the assets
-        super(MongoModuleStore, self).clone_course(source_course_id, dest_course_id, user_id)
-
         # verify that the dest_location really is an empty course
         # b/c we don't want the payload, I'm copying the guts of get_items here
         query = self._course_key_to_son(dest_course_id)
@@ -167,6 +164,9 @@ class DraftModuleStore(MongoModuleStore):
                     dest_course_id
                 )
             )
+
+        # clone the assets
+        super(MongoModuleStore, self).clone_course(source_course_id, dest_course_id, user_id)
 
         # get the whole old course
         new_course = self.get_course(dest_course_id)
