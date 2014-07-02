@@ -54,14 +54,14 @@ class TemplateTests(unittest.TestCase):
 
     def test_factories(self):
         test_course = persistent_factories.PersistentCourseFactory.create(
-            offering='tempcourse', org='testx',
+            offering='temp/course', org='testx',
             display_name='fun test course', user_id='testbot'
         )
         self.assertIsInstance(test_course, CourseDescriptor)
         self.assertEqual(test_course.display_name, 'fun test course')
         index_info = modulestore('split').get_course_index_info(test_course.id)
         self.assertEqual(index_info['org'], 'testx')
-        self.assertEqual(index_info['offering'], 'tempcourse')
+        self.assertEqual(index_info['offering'], 'temp/course')
 
         test_chapter = persistent_factories.ItemFactory.create(display_name='chapter 1',
             parent_location=test_course.location)
@@ -72,7 +72,7 @@ class TemplateTests(unittest.TestCase):
 
         with self.assertRaises(DuplicateCourseError):
             persistent_factories.PersistentCourseFactory.create(
-                offering='tempcourse', org='testx',
+                offering='temp/course', org='testx',
                 display_name='fun test course', user_id='testbot'
             )
 
@@ -81,7 +81,7 @@ class TemplateTests(unittest.TestCase):
         Test create_xblock to create non persisted xblocks
         """
         test_course = persistent_factories.PersistentCourseFactory.create(
-            offering='tempcourse', org='testx',
+            offering='temp/course', org='testx',
             display_name='fun test course', user_id='testbot'
         )
 
@@ -108,7 +108,7 @@ class TemplateTests(unittest.TestCase):
         try saving temporary xblocks
         """
         test_course = persistent_factories.PersistentCourseFactory.create(
-            offering='tempcourse', org='testx',
+            offering='temp/course', org='testx',
             display_name='fun test course', user_id='testbot'
         )
         test_chapter = modulestore('split').create_xblock(
@@ -147,7 +147,7 @@ class TemplateTests(unittest.TestCase):
 
     def test_delete_course(self):
         test_course = persistent_factories.PersistentCourseFactory.create(
-            offering='history.doomed', org='edu.harvard',
+            offering='history/doomed', org='edu.harvard',
             display_name='doomed test course',
             user_id='testbot')
         persistent_factories.ItemFactory.create(display_name='chapter 1',
@@ -170,7 +170,7 @@ class TemplateTests(unittest.TestCase):
         Test get_block_generations
         """
         test_course = persistent_factories.PersistentCourseFactory.create(
-            offering='history.hist101', org='edu.harvard',
+            offering='history/hist101', org='edu.harvard',
             display_name='history test course',
             user_id='testbot'
         )
